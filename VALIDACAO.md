@@ -131,3 +131,7 @@ Controlled acoustic checks through the physical microphone passed in English and
 ## Continuous voice history — native source build 0.2.3
 
 Fifteen JavaScript checks pass, including time-positioned level history, completed/ongoing pause intervals, expiry after 20 seconds, and rejection of invalid geometry. Native layout checks with synthetic level history and pause bands pass at 620, 800, 1120 and 1440 px without grid overflow. The narrow layout retains more terminal space. The visual preview is explicitly synthetic. A fresh physical-microphone recheck waited for macOS authorization and timed out before recording; diagnostic instrumentation in an untracked test copy confirmed the wait at AVCaptureDevice.requestAccess. This run does not claim a new acoustic pass. The helper protocol and recognition engine are unchanged from 0.2.2.
+
+### Microphone authorization follow-up — 0.2.3
+
+After the maintainer authorized microphone access in macOS, the physical-microphone recheck passed with 99 real meter events. The continuous history reacted to audio; paused speech was excluded; the first and final sentences on either side of the pause were retained; Stop & insert worked while paused; the PTY received exactly the recognized text without Return. This used controlled synthetic Portuguese speech through the speakers and the physical microphone, not a natural-voice accuracy benchmark. The previous authorization blocker is resolved. Local evidence: work/continuous-microphone-authorized.json (not published).

@@ -1,6 +1,11 @@
 import Foundation
 import AppKit
 
+private enum VoiceTestError: LocalizedError {
+    case message(String)
+    var errorDescription: String? { switch self { case .message(let text): return text } }
+}
+
 @MainActor
 extension TerminalWindow {
     func testUntil(_ message: String, seconds: Double = 30, _ check: () async throws -> Bool) async throws {
@@ -32,7 +37,62 @@ extension TerminalWindow {
             if let path = env["VOZ_TEST_SCREEN"] { try before.write(toFile: path, atomically: true, encoding: .utf8) }
             result["frontendReady"] = true
             result["childPID"] = shell.pid
+            if mode == "voice-controls" {
+                var transcript: String?
+                var failure: String?
+                var readings: [(Double, Double)] = []
+                let deliver = dictation.completed
+                dictation.completed = { text in transcript = text; deliver?(text) }
+                dictation.failed = { failure = $0 }
+                let meter = dictation.metered
+                dictation.metered = { level, seconds in readings.append((level, seconds)); meter?(level, seconds) }
+                dictation.start(language: "pt-BR")
+                try await testUntil("Microphone did not start: \(failure ?? "no error")", seconds: 90) { self.dictation.state == .recording || failure != nil }
+                guard failure == nil else { throw VoiceTestError.message(failure!) }
+                func speak(_ text: String) async throws {
+                    let voice = Process()
+                    voice.executableURL = URL(fileURLWithPath: "/usr/bin/say")
+                    voice.arguments = ["-v", "Luciana (Português (Brasil))", text]
+                    try voice.run()
+                    try await self.testUntil("Speech playback timed out.") { !voice.isRunning }
+                    guard voice.terminationStatus == 0 else { throw VoiceTestError.message("Speech playback failed.") }
+                }
+                try await speak("Testando os controles de voz. Guarde esta primeira frase.")
+                try await testUntil("No audio meter events arrived.") { readings.count > 5 }
+                let barsMoved = try await web.evaluateJavaScript("[...document.querySelectorAll('#voice-wave span')].some(bar => parseFloat(bar.style.height) > 4)") as? Bool == true
+                try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
+                try await testUntil("Pause was not acknowledged.") { self.dictation.state == .paused }
+                let countAtPause = readings.count
+                let pauseUI = try await web.evaluateJavaScript("document.getElementById('voice-status').textContent === 'Recording paused' && document.getElementById('voice-pause').textContent === 'Continue' && [...document.querySelectorAll('#voice-wave span')].every(bar => bar.style.height === '4px')") as? Bool == true
+                try await speak("Esta frase pausada deve ficar fora do texto.")
+                guard readings.count == countAtPause, pauseUI else { throw VoiceTestError.message("Paused audio metering or UI is incorrect.") }
+                try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
+                try await testUntil("Resume was not acknowledged.") { self.dictation.state == .recording }
+                try await speak("Agora continue a gravação. Guarde esta frase final.")
+                try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
+                try await testUntil("Second pause was not acknowledged.") { self.dictation.state == .paused }
+                try await web.evaluateJavaScript("document.getElementById('voice-stop').click()")
+                try await testUntil("Transcript did not arrive: \(failure ?? "no error")", seconds: 65) { transcript != nil || failure != nil }
+                guard let transcript, failure == nil else { throw VoiceTestError.message(failure ?? "No transcript") }
+                try await testUntil("Transcript was not inserted.") { !inputs.isEmpty }
+                let sent = inputs.joined().replacingOccurrences(of: "\u{1b}[200~", with: "").replacingOccurrences(of: "\u{1b}[201~", with: "")
+                guard sent == promptText(transcript), !sent.contains("\n"), !sent.contains("\r"), !transcript.lowercased().contains("frase pausada"), transcript.lowercased().contains("primeira frase"), transcript.lowercased().contains("frase final"), barsMoved else { throw VoiceTestError.message("Pause preservation, meter or draft transport failed.") }
+                result["meterEvents"] = readings.count
+                result["barsReactToAudio"] = barsMoved
+                result["pauseStopsMetering"] = true
+                result["pausedSpeechExcluded"] = true
+                result["beforeAndAfterPausePreserved"] = true
+                result["stopWhilePaused"] = true
+                result["transportMatches"] = true
+                result["passed"] = true
+                save()
+                if env["VOZ_TEST_KEEP_OPEN"] != "1" { closeForTest() }
+                return
+            }
             if mode == "layout" {
+                let voiceStates = try await web.evaluateJavaScript("(() => { const states = ['idle', 'preparing', 'recording', 'pausing', 'paused', 'resuming', 'stopping']; return states.every(state => { window.voz.state(state); const panel = document.getElementById('voice-panel'); const enabled = ['recording', 'paused'].includes(state); return panel.hidden === (state === 'idle') && document.getElementById('voice-stop').disabled === !enabled && document.getElementById('voice-pause').disabled === !enabled && document.body.dataset.dictating === String(state !== 'idle'); }); })()") as? Bool == true
+                guard voiceStates else { throw VoiceTestError.message("Voice controls do not match the recording lifecycle.") }
+                result["voiceStateControls"] = true
                 let originalLanguage = language.indexOfSelectedItem
                 var languageCodes: [String] = []
                 for index in 0..<language.numberOfItems {
@@ -49,10 +109,11 @@ extension TerminalWindow {
                 var sizes: [[String: Any]] = []
                 for size in [NSSize(width: 1120, height: 720), NSSize(width: 620, height: 380), NSSize(width: 800, height: 600), NSSize(width: 1440, height: 900), NSSize(width: 1120, height: 720)] {
                     window.setContentSize(size)
+                    try await web.evaluateJavaScript("window.voz.state('recording'); window.voz.meter(0.8, 12)")
                     var metrics: [String: Any] = [:]
                     do {
                         try await testUntil("Terminal grid extends beyond its content area.", seconds: 4) {
-                            metrics = try await self.web.evaluateJavaScript("(() => { const box = document.getElementById('terminal').getBoundingClientRect(); const grid = document.querySelector('.xterm-screen').getBoundingClientRect(); const expected = fit.proposeDimensions(); return {width: innerWidth, height: innerHeight, columns: term.cols, rows: term.rows, rightOverflow: Math.max(0, grid.right - box.right), bottomOverflow: Math.max(0, grid.bottom - box.bottom), fits: term.cols === expected.cols && term.rows === expected.rows && grid.right <= box.right + 1 && grid.bottom <= box.bottom + 1 && document.body.scrollWidth <= innerWidth}; })()") as? [String: Any] ?? [:]
+                            metrics = try await self.web.evaluateJavaScript("(() => { const box = document.getElementById('terminal').getBoundingClientRect(); const grid = document.querySelector('.xterm-screen').getBoundingClientRect(); const panel = document.getElementById('voice-panel').getBoundingClientRect(); const expected = fit.proposeDimensions(); return {width: innerWidth, height: innerHeight, columns: term.cols, rows: term.rows, rightOverflow: Math.max(0, grid.right - box.right), bottomOverflow: Math.max(0, grid.bottom - box.bottom), fits: term.cols === expected.cols && term.rows === expected.rows && grid.right <= box.right + 1 && grid.bottom <= box.bottom + 1 && panel.bottom <= box.top && document.body.scrollWidth <= innerWidth}; })()") as? [String: Any] ?? [:]
                             return abs(self.web.bounds.width - size.width) < 1 && metrics["fits"] as? Bool == true
                         }
                     } catch {
@@ -62,6 +123,7 @@ extension TerminalWindow {
                     sizes.append(metrics)
                 }
                 result["sizes"] = sizes
+                try await web.evaluateJavaScript("window.voz.state('idle')")
                 result["passed"] = true
                 save(); closeForTest(); return
             }
@@ -170,7 +232,7 @@ extension TerminalWindow {
             }
             result["insertionPassed"] = true
             result["passed"] = mode != "long-microphone" || (result["openingPreserved"] as? Bool == true && result["closingPreserved"] as? Bool == true)
-        } catch { result["error"] = error.localizedDescription }
+        } catch { dictation.cancel(); result["error"] = error.localizedDescription }
         save()
         if env["VOZ_TEST_KEEP_OPEN"] != "1" { closeForTest() }
     }

@@ -123,3 +123,7 @@ Removed the duplicate window buttons from the content header at the maintainer's
 The native layout regression passed at 1120 → 620 → 800 → 1440 → 1120 px with no grid overflow. All three displayed language choices map to the supported pt-BR, pt-PT and en-US identifiers; the test restores its original selection without changing saved preferences. Local evidence: work/native-021-layout.json. No new microphone run was performed for this UI-only patch.
 
 Native 0.2.1 installed with a verified code signature. Public prerelease v0.2.1 includes the new native ZIP, unchanged VSIX 0.1.2 and checksums. All assets downloaded without authentication and matched local files byte for byte. Previous release assets were not overwritten.
+
+## Native voice panel — source build 0.2.2
+
+Controlled acoustic checks through the physical microphone passed in English and Brazilian Portuguese: real level events moved the seven bars; Pause stopped metering; speech played during Pause was excluded; the first and final sentences on either side of Pause were retained; Stop & insert also worked while paused; PTY bytes matched the transcript without Return. These checks use synthetic speaker playback, not a natural-voice accuracy benchmark. Window-fit checks with the panel visible passed at 620, 800, 1120 and 1440 pixels, and all recording states produced the expected enabled/disabled controls. Twelve JavaScript unit checks and native PTY/sanitization checks also passed. The public 0.2.1 assets and VS Code extension are unchanged.

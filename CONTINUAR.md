@@ -29,3 +29,7 @@ Build both packages, inspect their contents, run relevant checks, prepare checks
 ## Native 0.2.1 follow-up
 
 The maintainer requested removal of duplicate header window controls. Only standard macOS title-bar controls remain. Native 0.2.1 adds readable spoken-language names, shorter hints and clearer voice actions while preserving language IDs/preferences. VS Code stays at 0.1.2. Native 0.2.1 is installed and published. All release assets were downloaded anonymously and matched the local files. v0.2.0 artifacts and open sessions were preserved.
+
+## Native 0.2.2 source follow-up
+
+In-terminal real microphone level bars, audio duration and Pause/Continue controls are implemented. Transcription remains after Stop, with no automatic Enter. The helper emits metering/pause events only with the native client's opt-in --meter flag, preserving the VS Code protocol. The 0.2.1 public release assets and VS Code 0.1.2 are unchanged. See terminal/README.md for the voice-controls integration mode.

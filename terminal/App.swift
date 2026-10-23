@@ -103,6 +103,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
             self.js("window.voz.write(\(Self.json(Data("\r\n[Session ended]\r\n".utf8).base64EncodedString())))")
         }
         dictation.changed = { [weak self] state in self?.voiceState(state) }
+        dictation.metered = { [weak self] level, seconds in self?.js("window.voz.meter(\(level), \(seconds))") }
         dictation.completed = { [weak self] text in
             guard let self else { return }
             guard self.shell.pid > 0 else { self.recover(text, reason: "Session ended. Your dictation is preserved here."); return }
@@ -148,7 +149,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
     }
 
     @objc func toggleVoice() {
-        if dictation.state == .recording { dictation.stop() }
+        if dictation.state == .recording || dictation.state == .paused { dictation.stop() }
         else if dictation.state == .idle, shell.pid > 0 { dictation.start(language: language.selectedItem?.representedObject as? String ?? "pt-BR") }
         window.makeFirstResponder(web)
         js("window.voz.focus()")
@@ -160,18 +161,22 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         let active = state != .idle
         cancel.isHidden = !active
         language.isEnabled = !active
-        microphone.isEnabled = (state == .idle || state == .recording) && shell.pid > 0
+        let canStop = state == .recording || state == .paused
+        microphone.isEnabled = (state == .idle || canStop) && shell.pid > 0
         microphone.contentTintColor = state == .recording ? .systemRed : NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
-        microphone.title = state == .recording ? "Stop & insert" : "Dictate"
-        microphone.toolTip = state == .recording ? "Stop recording and insert the text without sending it." : "Start voice dictation (Control + Option + V). Your text stays editable."
-        microphone.image = NSImage(systemSymbolName: state == .recording ? "stop.fill" : "mic", accessibilityDescription: microphone.title)
+        microphone.title = canStop ? "Stop & insert" : "Dictate"
+        microphone.toolTip = canStop ? "Stop recording and insert the text without sending it." : "Start voice dictation (Control + Option + V). Your text stays editable."
+        microphone.image = NSImage(systemSymbolName: canStop ? "stop.fill" : "mic", accessibilityDescription: microphone.title)
         status.stringValue = switch state {
         case .idle: "Speak instead of typing · ⌃⌥V to start"
         case .preparing: "Preparing microphone · authorize access if macOS asks"
         case .recording: "Listening · click Stop & insert when you are done"
+        case .pausing: "Pausing microphone…"
+        case .paused: "Paused · your recording is preserved"
+        case .resuming: "Resuming microphone…"
         case .stopping: "Transcribing on your Mac…"
         }
-        js("window.voz.state(\(active))")
+        js("window.voz.state(\(Self.json(state.rawValue)))")
     }
 
     func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -196,6 +201,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         case "resize": if let cols = body["columns"] as? Int, let rows = body["rows"] as? Int { shell.resize(columns: cols, rows: rows) }
         case "voice": toggleVoice()
         case "cancelVoice": cancelVoice()
+        case "pauseVoice": dictation.togglePause()
         case "title": if let title = body["title"] as? String { window.title = title.isEmpty ? "VozTTY" : "VozTTY — \(title.prefix(100))" }
         default: break
         }

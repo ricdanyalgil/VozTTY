@@ -10,7 +10,7 @@ func promptText(_ text: String) -> String {
 
 @MainActor
 final class TerminalDictation {
-    enum State: String { case idle, preparing, recording, stopping }
+    enum State: String { case idle, preparing, recording, pausing, paused, resuming, stopping }
     private(set) var state: State = .idle
     private(set) var audioSeconds: Double?
     private(set) var captureSeconds: Double?
@@ -21,6 +21,7 @@ final class TerminalDictation {
     var changed: ((State) -> Void)?
     var completed: ((String) -> Void)?
     var failed: ((String) -> Void)?
+    var metered: ((Double, Double) -> Void)?
 
     func start(language: String) {
         guard state == .idle else { return }
@@ -28,7 +29,7 @@ final class TerminalDictation {
         let child = Process()
         let stdin = Pipe(), stdout = Pipe()
         child.executableURL = helper
-        child.arguments = ["--language", language]
+        child.arguments = ["--language", language, "--meter"]
         child.standardInput = stdin
         child.standardOutput = stdout
         child.standardError = FileHandle.nullDevice
@@ -61,13 +62,25 @@ final class TerminalDictation {
     }
 
     func stop() {
-        guard state == .recording else { return }
+        guard state == .recording || state == .paused else { return }
         update(.stopping)
         do { try input?.fileHandleForWriting.write(contentsOf: Data("stop\n".utf8)) }
         catch { fail("The microphone connection was interrupted."); return }
         timeout = Task { [weak self] in
             do { try await Task.sleep(for: .seconds(60)) } catch { return }
             self?.fail("Transcription timed out. Nothing was inserted.")
+        }
+    }
+
+    func togglePause() {
+        guard state == .recording || state == .paused else { return }
+        let command = state == .recording ? "pause" : "resume"
+        update(state == .recording ? .pausing : .resuming)
+        do { try input?.fileHandleForWriting.write(contentsOf: Data("\(command)\n".utf8)) }
+        catch { fail("The microphone connection was interrupted."); return }
+        timeout = Task { [weak self] in
+            do { try await Task.sleep(for: .seconds(10)) } catch { return }
+            self?.fail("The microphone did not acknowledge \(command). Nothing was inserted.")
         }
     }
 
@@ -79,6 +92,13 @@ final class TerminalDictation {
             buffer.removeSubrange(...end)
             guard let event = try? JSONSerialization.jsonObject(with: line) as? [String: String], let type = event["type"] else { fail("Invalid recognition response."); return }
             if type == "ready" && state == .preparing { update(.recording) }
+            else if type == "level", [.recording, .pausing, .resuming, .stopping].contains(state),
+                    let level = event["value"].flatMap(Double.init), level.isFinite, (0...1).contains(level),
+                    let seconds = event["seconds"].flatMap(Double.init), seconds.isFinite, seconds >= 0 {
+                metered?(level, seconds)
+            }
+            else if type == "paused" && state == .pausing { timeout?.cancel(); timeout = nil; update(.paused) }
+            else if type == "resumed" && state == .resuming { timeout?.cancel(); timeout = nil; update(.recording) }
             else if type == "error", let message = event["message"] { fail(String(message.prefix(1000))) }
             else if type == "final", state == .stopping, let value = event["text"] {
                 audioSeconds = event["audioSeconds"].flatMap(Double.init)

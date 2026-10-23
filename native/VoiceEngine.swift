@@ -27,6 +27,9 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     var operation: Task<Void, Never>?
     var stopping = false
     var captureSeconds: TimeInterval = 0
+    var meterEnabled = false
+    var meterTask: Task<Void, Never>?
+    var paused = false
 
     func prepare(language: String, inputFile: String?) async {
         do {
@@ -59,10 +62,23 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
             directory = folder
             let capture = try AVAudioRecorder(url: folder.appendingPathComponent("audio.caf"), settings: format.settings)
             capture.delegate = self
+            capture.isMeteringEnabled = meterEnabled
             guard capture.record() else { throw VoiceError.message("Could not start the microphone.") }
             recorder = capture
             inputURL = capture.url
             emit("ready")
+            if meterEnabled {
+                meterTask = Task { [weak self] in
+                    while !Task.isCancelled {
+                        do { try await Task.sleep(for: .milliseconds(100)) } catch { return }
+                        guard let self, let recorder = self.recorder else { return }
+                        guard !self.paused else { continue }
+                        recorder.updateMeters()
+                        let level = min(1, max(0, (Double(recorder.averagePower(forChannel: 0)) + 55) / 55))
+                        emit("level", metadata: ["value": String(level), "seconds": String(recorder.currentTime)])
+                    }
+                }
+            }
         } catch {
             fail(error.localizedDescription)
         }
@@ -71,6 +87,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     func stop() {
         guard !stopping, let inputURL else { return }
         stopping = true
+        meterTask?.cancel()
         captureSeconds = recorder?.currentTime ?? 0
         recorder?.stop()
         recorder = nil
@@ -78,6 +95,20 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
             do { try await transcribe(inputURL) }
             catch { fail(error.localizedDescription) }
         }
+    }
+
+    func pause() {
+        guard meterEnabled, !stopping, !paused, let recorder else { return }
+        recorder.pause()
+        paused = true
+        emit("paused")
+    }
+
+    func resume() {
+        guard meterEnabled, !stopping, paused, let recorder else { return }
+        guard recorder.record() else { fail("Could not resume the microphone. Please try again."); return }
+        paused = false
+        emit("resumed")
     }
 
     func transcribe(_ url: URL) async throws {
@@ -109,6 +140,8 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     }
 
     func cleanup() throws {
+        meterTask?.cancel()
+        meterTask = nil
         recorder?.stop()
         recorder = nil
         if let directory { try FileManager.default.removeItem(at: directory) }
@@ -150,8 +183,10 @@ struct Main {
         let args = Array(CommandLine.arguments.dropFirst())
         var language = "pt-BR"
         var inputFile: String?
+        var meterEnabled = false
         var index = 0
         while index < args.count {
+            if args[index] == "--meter" { meterEnabled = true; index += 1; continue }
             guard index + 1 < args.count else { emit("error", "message", "Invalid arguments."); exit(2) }
             switch args[index] {
             case "--language": language = args[index + 1]
@@ -162,10 +197,13 @@ struct Main {
         }
         guard ["pt-BR", "pt-PT", "en-US"].contains(language) else { emit("error", "message", "Invalid language."); exit(2) }
         let engine = VoiceEngine()
+        engine.meterEnabled = meterEnabled
         engine.operation = Task { await engine.prepare(language: language, inputFile: inputFile) }
         DispatchQueue.global().async {
             while let line = readLine() {
                 if line == "stop" { Task { @MainActor in engine.stop() } }
+                else if line == "pause" { Task { @MainActor in engine.pause() } }
+                else if line == "resume" { Task { @MainActor in engine.resume() } }
                 else if line == "cancel" { Task { @MainActor in engine.cancel() }; return }
                 else { Task { @MainActor in engine.fail("Invalid recording command.") }; return }
             }

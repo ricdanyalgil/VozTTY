@@ -2,6 +2,8 @@
 
 **Fale o próximo prompt sem sair do terminal.** Projeto open source com licença MIT. [English](README.md) · [Releases](https://github.com/ricdanyalgil/VozTTY/releases)
 
+**Estado de publicação:** desenvolvimento privado e primeira release em rascunho. O repositório e a versão só devem tornar-se públicos depois de validar a primeira versão e de o responsável aprovar a publicação. A licença MIT já está preparada para essa abertura futura.
+
 Microfone na barra do terminal, com reconhecimento local no Mac e inserção direta no prompt. Não lê nem escreve no clipboard e não acrescenta Enter.
 
 ## Usar

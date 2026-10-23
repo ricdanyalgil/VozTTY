@@ -8,6 +8,8 @@ VozTTY adds a microphone button to VS Code's terminal toolbar. Record a dictatio
 
 **Experimental, macOS-only.** The first release is a VS Code extension. A standalone Mac terminal is planned for a later stage; it is not included in this release.
 
+**Publication status:** development remains private and the first release is a draft. Make the repository and release public only after the first version has been validated and the maintainer approves publication. The MIT license is already prepared for that future open-source release.
+
 ## What it does
 
 - Adds a microphone button to the integrated terminal, including terminals opened as editor tabs.

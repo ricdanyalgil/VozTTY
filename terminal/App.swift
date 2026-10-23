@@ -7,7 +7,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
     let web: WKWebView
     let shell = ShellSession()
     let dictation = TerminalDictation()
-    let status = NSTextField(labelWithString: "Ready · your voice stays on this Mac")
+    let status = NSTextField(labelWithString: "Speak instead of typing · ⌃⌥V to start")
     let microphone = NSButton()
     let cancel = NSButton()
     let language = NSPopUpButton()
@@ -42,8 +42,13 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         status.lineBreakMode = .byTruncatingTail
         status.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         brand.setContentCompressionResistancePriority(.required, for: .horizontal)
-        language.addItems(withTitles: ["pt-BR", "pt-PT", "en-US"])
-        language.selectItem(withTitle: UserDefaults.standard.string(forKey: "language") ?? "pt-BR")
+        let savedLanguage = UserDefaults.standard.string(forKey: "language") ?? "pt-BR"
+        for (code, title) in [("pt-BR", "Portuguese (Brazil)"), ("pt-PT", "Portuguese (Portugal)"), ("en-US", "English (US)")] {
+            language.addItem(withTitle: title)
+            language.lastItem?.representedObject = code
+            if code == savedLanguage { language.select(language.lastItem) }
+        }
+        language.toolTip = "Choose the language you will speak. Recognition runs on your Mac."
         language.setAccessibilityLabel("Dictation language")
         language.target = self
         language.action = #selector(changeLanguage)
@@ -51,12 +56,13 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         microphone.image = NSImage(systemSymbolName: "mic", accessibilityDescription: "Start dictation")
         microphone.imagePosition = .imageLeading
         microphone.bezelStyle = .rounded
-        microphone.contentTintColor = .labelColor
+        microphone.contentTintColor = NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
         microphone.setContentCompressionResistancePriority(.required, for: .horizontal)
         microphone.target = self
         microphone.action = #selector(toggleVoice)
-        microphone.toolTip = "Speak into this prompt. Control + Option + V."
+        microphone.toolTip = "Start voice dictation (Control + Option + V). Your text stays editable."
         cancel.title = "Cancel"
+        cancel.toolTip = "Discard this recording without inserting any text."
         cancel.bezelStyle = .rounded
         cancel.target = self
         cancel.action = #selector(cancelVoice)
@@ -66,29 +72,15 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         identity.orientation = .vertical
         identity.alignment = .leading
         identity.spacing = 3
-        let windowControls = NSStackView()
-        windowControls.spacing = 4
-        for (symbol, label, action) in [
-            ("minus", "Minimize window", #selector(NSWindow.performMiniaturize(_:))),
-            ("arrow.up.left.and.arrow.down.right", "Maximize or restore window", #selector(NSWindow.zoom(_:))),
-            ("xmark", "Close window", #selector(NSWindow.performClose(_:)))
-        ] {
-            let button = NSButton(image: NSImage(systemSymbolName: symbol, accessibilityDescription: label)!, target: window, action: action)
-            button.bezelStyle = .rounded
-            button.toolTip = label
-            button.setAccessibilityLabel(label)
-            button.widthAnchor.constraint(equalToConstant: 28).isActive = true
-            windowControls.addArrangedSubview(button)
-        }
-        let bar = NSStackView(views: [identity, spacer, language, cancel, microphone, windowControls])
+        let bar = NSStackView(views: [identity, spacer, language, cancel, microphone])
         bar.orientation = .horizontal
         bar.spacing = 12
         bar.edgeInsets = NSEdgeInsets(top: 10, left: 24, bottom: 10, right: 24)
-        let you = NSTextField(labelWithString: "› You")
+        let you = NSTextField(labelWithString: "› Your input")
         you.textColor = NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
-        let assistant = NSTextField(labelWithString: "Assistant")
+        let assistant = NSTextField(labelWithString: "Terminal output")
         assistant.textColor = .labelColor
-        let shortcuts = NSTextField(labelWithString: "⌃⌥V Dictate   ·   Esc Cancel   ·   Enter Send")
+        let shortcuts = NSTextField(labelWithString: "⌃⌥V Voice   ·   Esc Cancel")
         shortcuts.textColor = .secondaryLabelColor
         for label in [you, assistant, shortcuts] { label.font = .systemFont(ofSize: 11) }
         let footer = NSStackView(views: [you, assistant, NSView(), shortcuts])
@@ -117,7 +109,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
             self.web.evaluateJavaScript("window.voz.insert(\(Self.json(text)))") { [weak self] _, error in
                 guard let self else { return }
                 if let error { self.recover(text, reason: "Could not insert the transcript: \(error.localizedDescription)") }
-                else { self.status.stringValue = "Text inserted · review before sending"; self.inserted?(text) }
+                else { self.status.stringValue = "Text inserted · review before pressing Enter"; self.inserted?(text) }
             }
         }
         dictation.failed = { [weak self] message in self?.error(message) }
@@ -157,25 +149,26 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
 
     @objc func toggleVoice() {
         if dictation.state == .recording { dictation.stop() }
-        else if dictation.state == .idle, shell.pid > 0 { dictation.start(language: language.titleOfSelectedItem ?? "pt-BR") }
+        else if dictation.state == .idle, shell.pid > 0 { dictation.start(language: language.selectedItem?.representedObject as? String ?? "pt-BR") }
         window.makeFirstResponder(web)
         js("window.voz.focus()")
     }
     @objc func cancelVoice() { dictation.cancel(); window.makeFirstResponder(web) }
-    @objc func changeLanguage() { UserDefaults.standard.set(language.titleOfSelectedItem, forKey: "language") }
+    @objc func changeLanguage() { UserDefaults.standard.set(language.selectedItem?.representedObject as? String ?? "pt-BR", forKey: "language") }
 
     private func voiceState(_ state: TerminalDictation.State) {
         let active = state != .idle
         cancel.isHidden = !active
         language.isEnabled = !active
         microphone.isEnabled = (state == .idle || state == .recording) && shell.pid > 0
-        microphone.contentTintColor = state == .recording ? .systemRed : .labelColor
+        microphone.contentTintColor = state == .recording ? .systemRed : NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
         microphone.title = state == .recording ? "Stop & insert" : "Dictate"
+        microphone.toolTip = state == .recording ? "Stop recording and insert the text without sending it." : "Start voice dictation (Control + Option + V). Your text stays editable."
         microphone.image = NSImage(systemSymbolName: state == .recording ? "stop.fill" : "mic", accessibilityDescription: microphone.title)
         status.stringValue = switch state {
-        case .idle: "Ready · your voice stays on this Mac"
+        case .idle: "Speak instead of typing · ⌃⌥V to start"
         case .preparing: "Preparing microphone · authorize access if macOS asks"
-        case .recording: "Recording · speak your whole thought"
+        case .recording: "Listening · click Stop & insert when you are done"
         case .stopping: "Transcribing on your Mac…"
         }
         js("window.voz.state(\(active))")

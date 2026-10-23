@@ -6,7 +6,7 @@ The maintainer explicitly authorized making the repository public and publishing
 
 ## Current products
 
-- Native Mac terminal: black layout, blue prompt accents, persistent window controls, corrected grid sizing and app icon. Installed in /Applications/VozTTY.app.
+- Native Mac terminal: black layout, blue prompt accents, standard macOS title-bar controls, corrected grid sizing and app icon. Installed in /Applications/VozTTY.app.
 - Extension: English UI/messages in 0.1.2, stable command IDs and original no-Enter/no-clipboard behavior. Do not interrupt existing VS Code windows to update them.
 - Main README, contribution guide and release notes are in English. Optional Portuguese documentation remains available.
 - Both clients use the local Apple SpeechAnalyzer helper. Apple Silicon/macOS 26+ only; ad hoc signed, not notarized.
@@ -25,3 +25,7 @@ Twelve JavaScript unit tests, native PTY/input checks, long draft insertion in a
 ## Before another release
 
 Build both packages, inspect their contents, run relevant checks, prepare checksums and verify the public release assets. Keep third-party licenses. Reviewers should distinguish synthetic layout screenshots from actual assistant/recognition results. Do not publish to the VS Code Marketplace without a separate request.
+
+## Native 0.2.1 follow-up
+
+The maintainer requested removal of duplicate header window controls. Only standard macOS title-bar controls remain. Native 0.2.1 adds readable spoken-language names, shorter hints and clearer voice actions while preserving language IDs/preferences. VS Code stays at 0.1.2. Prepare and verify the native update and its public patch release without overwriting v0.2.0 artifacts or interrupting open sessions.

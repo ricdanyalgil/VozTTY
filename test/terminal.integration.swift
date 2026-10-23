@@ -33,6 +33,17 @@ extension TerminalWindow {
             result["frontendReady"] = true
             result["childPID"] = shell.pid
             if mode == "layout" {
+                let originalLanguage = language.indexOfSelectedItem
+                var languageCodes: [String] = []
+                for index in 0..<language.numberOfItems {
+                    language.selectItem(at: index)
+                    languageCodes.append(language.selectedItem?.representedObject as? String ?? "")
+                }
+                language.selectItem(at: originalLanguage)
+                guard languageCodes == ["pt-BR", "pt-PT", "en-US"] else {
+                    throw NSError(domain: "VozTTYTest", code: 7, userInfo: [NSLocalizedDescriptionKey: "Language labels no longer map to the speech engine identifiers."])
+                }
+                result["languageCodes"] = languageCodes
                 window.makeKeyAndOrderFront(nil)
                 NSApplication.shared.activate(ignoringOtherApps: true)
                 var sizes: [[String: Any]] = []

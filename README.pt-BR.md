@@ -2,7 +2,7 @@
 
 **Fale o próximo prompt sem sair do terminal.** Projeto open source com licença MIT. [English](README.md) · [Releases](https://github.com/ricdanyalgil/VozTTY/releases)
 
-**Estado de publicação:** prévia pública autorizada pelo responsável. O terminal Mac e a extensão VS Code estão disponíveis nos [downloads da release v0.2.0](https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.0). Os pacotes ainda não têm notarização da Apple.
+**Estado de publicação:** prévia pública autorizada pelo responsável. O terminal Mac e a extensão VS Code estão disponíveis nos [downloads da release v0.2.0](https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.1). Os pacotes ainda não têm notarização da Apple.
 
 Microfone na barra do terminal, com reconhecimento local no Mac e inserção direta no prompt. Não lê nem escreve no clipboard e não acrescenta Enter.
 

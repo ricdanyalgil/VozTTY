@@ -1,6 +1,6 @@
 {
   "source": "CUA screenshot of the built native VozTTY app",
-  "content": "English synthetic conversation in the current native application, including persistent window controls and corrected terminal fitting; no model response or recognition accuracy claim",
+  "content": "English synthetic conversation in native VozTTY 0.2.1 with a simplified voice-only header, readable language names and standard macOS title-bar controls; no model response or recognition accuracy claim",
   "date": "2026-10-23",
   "purpose": "Conversation layout preview",
   "privacy": "No credentials, account information or personal dictation"

@@ -3,7 +3,7 @@
 <p align="center"><strong>Speak your next prompt.</strong><br />Local voice dictation for your Mac terminal and VS Code.<br />Speak freely. Review the text. Press Enter when you are ready.</p>
 
 <p align="center">
-  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.0"><img src="https://img.shields.io/github/v/release/ricdanyalgil/VozTTY?include_prereleases&amp;label=public%20preview&amp;style=flat" alt="Public preview release" /></a>
+  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.1"><img src="https://img.shields.io/github/v/release/ricdanyalgil/VozTTY?include_prereleases&amp;label=public%20preview&amp;style=flat" alt="Public preview release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="MIT license" /></a>
   <img src="https://img.shields.io/badge/macOS-26%2B-black?logo=apple&amp;style=flat" alt="macOS 26 or later" />
   <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-555555?style=flat" alt="Apple Silicon arm64" />
@@ -37,9 +37,9 @@ Text arrives **after you stop recording**. Word-by-word live transcription is no
 | Where | A standalone native Mac application | Your existing integrated terminals |
 | Voice controls | **Dictate / Stop & insert** in the header | Microphone and Stop icons in the terminal toolbar |
 | Display | Black background, blue prompt accents and light output | Your VS Code terminal theme |
-| Window | Minimize, maximize/restore and close controls | Standard VS Code controls |
+| Window | Standard macOS title-bar controls | Standard VS Code controls |
 | Engine | AppKit, WebKit, xterm.js and a real macOS PTY | VS Code terminal API and a native Swift helper |
-| Current package | **0.2.0** | **0.1.2** |
+| Current package | **0.2.1** | **0.1.2** |
 
 The Mac terminal currently supports one window/session per instance. Tabs, split panes and session restoration are on the roadmap.
 
@@ -49,9 +49,9 @@ The Mac terminal currently supports one window/session per instance. Tabs, split
 
 | Package | Download | Install |
 | :--- | :--- | :--- |
-| Mac terminal | [VozTTY Terminal 0.2.0 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.0/voztty-terminal-0.2.0-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
-| VS Code extension | [VozTTY 0.1.2 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.0/voztty-0.1.2-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
-| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.0/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
+| Mac terminal | [VozTTY Terminal 0.2.1 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.1/voztty-terminal-0.2.1-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
+| VS Code extension | [VozTTY 0.1.2 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.1/voztty-0.1.2-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
+| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.1/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
 
 These are **public preview builds**, signed ad hoc and **not notarized by Apple**. macOS may require a manual security review before opening them. Building from source is also supported. The extension is distributed through GitHub Releases; it is not listed on the VS Code Marketplace yet.
 
@@ -67,7 +67,7 @@ claude
 agy
 ```
 
-Click **Dictate**, wait for **Recording**, speak, then choose **Stop & insert**. Read and edit the transcript before pressing Enter. The CLIs must be installed and authenticated separately; VozTTY does not bundle them or manage their accounts.
+Click **Dictate**, wait for **Listening**, speak, then choose **Stop & insert**. Read and edit the transcript before pressing Enter. Choose your spoken language by name in the header; the interface keeps window actions in the standard macOS title bar. The CLIs must be installed and authenticated separately; VozTTY does not bundle them or manage their accounts.
 
 ### In VS Code
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## Public preview v0.2.1 — 2026-10-23
+
+Native terminal update; the VS Code extension remains 0.1.2.
+
+- Remove duplicate minimize/maximize/close buttons from the content header; keep the standard macOS title-bar controls.
+- Show readable language names while preserving the recognition language IDs and saved preferences.
+- Make Dictate easier to find, shorten the keyboard hints and clarify recording, cancellation and review guidance.
+
 ## Public preview v0.2.0 — 2026-10-23
 
 This release includes two separate downloads: **VozTTY Terminal 0.2.0** and the **VS Code extension 0.1.2**.

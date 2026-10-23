@@ -115,3 +115,9 @@ Release checks passed: 12 JavaScript unit tests; native text/PTY/resize checks; 
 The full Git history was scanned for secrets. Two generic-key matches were inside the unmodified xterm.js bundle; its bytes were verified against the official @xterm/xterm 6.0.0 npm archive (SHA-256 14903579ff54664cd72f8e8699e6961a6272c21863ec1c3b118cdc8af5d4a972). Only those exact historical fingerprints were excluded from the local audit; no other findings remained. Diagnostics, recordings and scanner reports stay outside the repository. Packages remain ad hoc signed and not Apple-notarized.
 
 Publication verified: GitHub repository PUBLIC; v0.2.0 published as a public prerelease with both binary packages and SHA256SUMS.txt. All three assets downloaded without authentication and matched the local files byte for byte. English README accessible without login. No VS Code Marketplace publication was performed.
+
+## Native 0.2.1 usability update — 2026-10-23
+
+Removed the duplicate window buttons from the content header at the maintainer's request. Standard macOS close/minimize/zoom controls remain. The voice header now uses readable language names, a clearer Dictate action, shorter keyboard hints and clearer listening/review guidance. Existing language IDs and preferences are preserved through menu-item represented values.
+
+The native layout regression passed at 1120 → 620 → 800 → 1440 → 1120 px with no grid overflow. All three displayed language choices map to the supported pt-BR, pt-PT and en-US identifiers; the test restores its original selection without changing saved preferences. Local evidence: work/native-021-layout.json. No new microphone run was performed for this UI-only patch.

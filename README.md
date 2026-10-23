@@ -18,7 +18,7 @@
 
 ## Your voice, where you already work
 
-Explaining a task can be easier than typing it. VozTTY brings a microphone directly to your terminal so you can explain the context, add details and keep your train of thought.
+**Dictating can be faster than typing long prompts—and gives you room to explain more.** Speak through your ideas, describe the context and include the details you might skip when typing. VozTTY brings a microphone directly to your terminal so you can keep your train of thought, then review and edit the transcript before sending it.
 
 **Click the microphone → speak → stop → review → send it yourself.**
 

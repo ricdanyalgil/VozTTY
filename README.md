@@ -92,7 +92,8 @@ Tests check **draft insertion**, not whether an assistant generated a response. 
 | Long voice capture in VozTTY Terminal | Controlled physical-microphone test: **82 seconds, 182 recognized words**, opening and closing preserved, existing prefix retained, no Enter |
 | Codex CLI in VozTTY Terminal | Long draft visible in the actual composer, left unsent |
 | Claude Code in VozTTY Terminal | Long draft retained as a **Pasted text** block, left unsent |
-| Gemini CLI / Antigravity CLI | Personal Google accounts must use the official successor, `agy`; onboarding and input check pending |
+| Antigravity CLI (Google successor) in VozTTY Terminal | 182-word draft retained as a paste block, exact PTY input, no Enter |
+| Legacy Gemini CLI | Personal-account access retired by Google; use `agy` or an eligible enterprise/API method |
 | Claude Code + Codex CLI through the VS Code extension | 182-word drafts retained, no Enter; synthetic long audio with the real Apple recognizer |
 
 The long acoustic test used speech played through the Mac's speakers and recorded through its physical microphone. Earlier acoustic attempts lost words; the controlled repeat preserved the opening and closing. Recognition can still substitute words and punctuation. **This is an integration check, not an accuracy benchmark or a completed long-form test with the maintainer's own voice.**

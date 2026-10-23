@@ -31,3 +31,7 @@
 ## Próximo passo atualizado — Antigravity
 
 O responsável confirmou o login Google, mas Gemini CLI continuou recusado pelo serviço. Confirmada a migração oficial e instalado Antigravity CLI (`agy` 1.4.6). A janela VozTTY com Antigravity avançou para os termos de serviço e mostra Gemini 4 Argon em modo plan. O responsável deve rever a opção de partilha de interações e concluir Done; não aceitar termos em seu nome. Depois verificar prompt e repetir inserção de 182 palavras sem Enter. Não substituir o comando gemini por alias nem alterar autenticação. Revisão visual completa continua adiada por preferência do responsável.
+
+## Tema preto
+
+A pedido do responsável, terminal com fundo preto (#000000), texto neutro, cursor claro, fonte SFMono-Regular/Menlo, barra superior compacta e título integrado. Alterações em terminal/App.swift e terminal/web/terminal.{css,js}. Compilado, assinatura verificada e instalado em /Applications/VozTTY.app. O responsável concluiu login e termos do Antigravity; o cliente chegou ao compositor com Gemini 4 Argon.

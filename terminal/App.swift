@@ -29,11 +29,12 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.appearance = NSAppearance(named: .darkAqua)
-        window.backgroundColor = NSColor(srgbRed: 17/255, green: 27/255, blue: 34/255, alpha: 1)
+        window.backgroundColor = .black
+        window.titlebarAppearsTransparent = true
         web.navigationDelegate = self
         web.configuration.userContentController.add(self, name: "terminal")
         let brand = NSTextField(labelWithString: "VozTTY")
-        brand.font = .systemFont(ofSize: 17, weight: .semibold)
+        brand.font = .systemFont(ofSize: 15, weight: .semibold)
         status.font = .systemFont(ofSize: 12)
         status.textColor = .secondaryLabelColor
         status.lineBreakMode = .byTruncatingTail
@@ -48,7 +49,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         microphone.image = NSImage(systemSymbolName: "mic", accessibilityDescription: "Start dictation")
         microphone.imagePosition = .imageLeading
         microphone.bezelStyle = .rounded
-        microphone.contentTintColor = NSColor(srgbRed: 216/255, green: 252/255, blue: 135/255, alpha: 1)
+        microphone.contentTintColor = .labelColor
         microphone.setContentCompressionResistancePriority(.required, for: .horizontal)
         microphone.target = self
         microphone.action = #selector(toggleVoice)
@@ -61,8 +62,8 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         let spacer = NSView()
         let bar = NSStackView(views: [brand, status, spacer, language, cancel, microphone])
         bar.orientation = .horizontal
-        bar.spacing = 14
-        bar.edgeInsets = NSEdgeInsets(top: 12, left: 20, bottom: 12, right: 16)
+        bar.spacing = 12
+        bar.edgeInsets = NSEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)
         let footer = NSTextField(labelWithString: "Control + Option + V to dictate   ·   Esc to cancel   ·   Review before sending")
         footer.font = .systemFont(ofSize: 11)
         footer.textColor = .secondaryLabelColor
@@ -70,7 +71,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         window.contentView = root
         for view in [bar, web, footer] { view.translatesAutoresizingMaskIntoConstraints = false; root.addSubview(view) }
         NSLayoutConstraint.activate([
-            bar.topAnchor.constraint(equalTo: root.topAnchor), bar.leadingAnchor.constraint(equalTo: root.leadingAnchor), bar.trailingAnchor.constraint(equalTo: root.trailingAnchor), bar.heightAnchor.constraint(equalToConstant: 58),
+            bar.topAnchor.constraint(equalTo: root.topAnchor), bar.leadingAnchor.constraint(equalTo: root.leadingAnchor), bar.trailingAnchor.constraint(equalTo: root.trailingAnchor), bar.heightAnchor.constraint(equalToConstant: 50),
             web.topAnchor.constraint(equalTo: bar.bottomAnchor), web.leadingAnchor.constraint(equalTo: root.leadingAnchor), web.trailingAnchor.constraint(equalTo: root.trailingAnchor), web.bottomAnchor.constraint(equalTo: footer.topAnchor, constant: -8),
             footer.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: 20), footer.bottomAnchor.constraint(equalTo: root.bottomAnchor, constant: -10)
         ])
@@ -141,7 +142,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         cancel.isHidden = !active
         language.isEnabled = !active
         microphone.isEnabled = (state == .idle || state == .recording) && shell.pid > 0
-        microphone.contentTintColor = state == .recording ? .systemRed : NSColor(srgbRed: 216/255, green: 252/255, blue: 135/255, alpha: 1)
+        microphone.contentTintColor = state == .recording ? .systemRed : .labelColor
         microphone.title = state == .recording ? "Stop & insert" : "Dictate"
         microphone.image = NSImage(systemSymbolName: state == .recording ? "stop.fill" : "mic", accessibilityDescription: microphone.title)
         status.stringValue = switch state {

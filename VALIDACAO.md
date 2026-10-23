@@ -65,3 +65,7 @@ Os testes automatizados fecham apenas as suas próprias janelas quando terminam.
 ## Continuação — cliente Google suportado (23/10/2026)
 
 A pesquisa nas fontes oficiais confirmou a migração de contas pessoais para Antigravity CLI: https://github.com/google-gemini/gemini-cli/discussions/27274 e https://antigravity.google/docs/getting-started/. Instalado `agy` 1.4.6 pela distribuição oficial via Homebrew Cask. Aberto dentro de uma cópia do VozTTY, em modo `plan`, fora do repositório privado. O fluxo avançou do login para a configuração e mostrou Gemini 4 Argon. Parou nos termos de serviço, que precisam de decisão do responsável; a partilha de interações surge marcada por defeito. Não se aceitou o acordo nem se alterou essa opção. A inserção de rascunho longo no Antigravity ainda não foi validada.
+
+## Antigravity e tema preto — 23/10/2026
+
+Após o responsável concluir login e termos, Antigravity CLI 1.4.6 abriu Gemini 4 Argon. Teste no compositor real do terminal nativo, tema preto: 182 palavras/1130 caracteres de uma transcrição sintética previamente reconhecida; prefixo preservado, bloco de colagem visível, bytes recebidos iguais ao texto, processo ativo e nenhum Enter enviado. Evidência local: work/antigravity-black-final.json. Isto valida inserção no terminal próprio; microfone direto com Antigravity e extensão VS Code com Antigravity ainda não foram repetidos.

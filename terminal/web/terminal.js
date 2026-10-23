@@ -1,11 +1,11 @@
 'use strict';
 const term = new Terminal({
-  fontFamily: 'Menlo, Monaco, monospace', fontSize: 14, lineHeight: 1.22,
+  fontFamily: 'SFMono-Regular, Menlo, Monaco, monospace', fontSize: 14, lineHeight: 1.3,
   cursorBlink: true, scrollback: 5000, screenReaderMode: true,
-  theme: { background: '#111b22', foreground: '#e8f0f2', cursor: '#d8fc87', selectionBackground: '#405441',
-    black: '#192832', red: '#ff8e86', green: '#d8fc87', yellow: '#f3d08a', blue: '#8dc7ff',
-    magenta: '#d6afff', cyan: '#8cddd3', white: '#e8f0f2', brightBlack: '#8197a3', brightRed: '#ffa8a1',
-    brightGreen: '#e3ffb1', brightYellow: '#ffe6ac', brightBlue: '#b2dcff', brightMagenta: '#ead0ff', brightCyan: '#b0eee6', brightWhite: '#ffffff' }
+  theme: { background: '#000000', foreground: '#e6e6e6', cursor: '#eeeeee', cursorAccent: '#000000', selectionBackground: '#343434',
+    black: '#161616', red: '#f08080', green: '#a8d5a2', yellow: '#e6cf91', blue: '#9dbbea',
+    magenta: '#c6a8df', cyan: '#91cccc', white: '#dedede', brightBlack: '#858585', brightRed: '#ffaaaa',
+    brightGreen: '#c3e8b5', brightYellow: '#f4e2ae', brightBlue: '#b7d1f4', brightMagenta: '#dfc4ee', brightCyan: '#b4e5e5', brightWhite: '#ffffff' }
 });
 const fit = new FitAddon.FitAddon();
 const send = body => window.webkit.messageHandlers.terminal.postMessage(body);

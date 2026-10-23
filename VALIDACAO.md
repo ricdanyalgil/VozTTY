@@ -69,3 +69,9 @@ A pesquisa nas fontes oficiais confirmou a migração de contas pessoais para An
 ## Antigravity e tema preto — 23/10/2026
 
 Após o responsável concluir login e termos, Antigravity CLI 1.4.6 abriu Gemini 4 Argon. Teste no compositor real do terminal nativo, tema preto: 182 palavras/1130 caracteres de uma transcrição sintética previamente reconhecida; prefixo preservado, bloco de colagem visível, bytes recebidos iguais ao texto, processo ativo e nenhum Enter enviado. Evidência local: work/antigravity-black-final.json. Isto valida inserção no terminal próprio; microfone direto com Antigravity e extensão VS Code com Antigravity ainda não foram repetidos.
+
+## Confirmação manual do responsável — Antigravity
+
+Em 23/10/2026, o responsável repetiu o teste com o microfone e confirmou sucesso no Antigravity, mostrando o rascunho “Testando o microfone testando o microfone.” no compositor. Confirma ditado curto com a voz natural; não equivale a um novo teste longo.
+
+Na continuação, a aplicação instalada abriu Codex 0.163.0 e a UI mostrou o ditado natural do responsável “Testando o microfone no OpenI Codex.” como rascunho. Nenhum prompt foi submetido pelo agente. A sessão herdou a configuração local YOLO e abriu em /; definir uma pasta de projeto e permissões antes de executar trabalho. A transcrição de nomes próprios pode precisar de revisão.

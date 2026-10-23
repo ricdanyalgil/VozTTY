@@ -35,3 +35,5 @@ O responsável confirmou o login Google, mas Gemini CLI continuou recusado pelo 
 ## Tema preto
 
 A pedido do responsável, terminal com fundo preto (#000000), texto neutro, cursor claro, fonte SFMono-Regular/Menlo, barra superior compacta e título integrado. Alterações em terminal/App.swift e terminal/web/terminal.{css,js}. Compilado, assinatura verificada e instalado em /Applications/VozTTY.app. O responsável concluiu login e termos do Antigravity; o cliente chegou ao compositor com Gemini 4 Argon.
+
+O responsável confirmou o teste real de microfone curto no Antigravity (“Testando o microfone testando o microfone.”). Próximo uso solicitado: Codex no VozTTY; aberto em nova janela sem fechar o Antigravity.

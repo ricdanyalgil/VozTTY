@@ -89,3 +89,7 @@ Em 23/10/2026, o responsável mostrou Claude Code 2.1.309, Opus 5.5, aberto na p
 - Prévia nativa capturada com conversa sintética identificada: assets/terminal-conversation.png. Não apresenta conteúdo gerado por um modelo.
 - A primeira verificação do destaque correu antes do primeiro desenho de uma janela em segundo plano; foi corrigida a espera visual no teste. Um aviso de atualização do Codex interrompeu a segunda execução; o teste passou a dispensá-lo com Escape, sem instalar atualizações ou alterar definições globais.
 - Limite: são marcadores visuais, não metadados de autor. Citações com o mesmo prefixo podem ficar azuis; continuações com quebra explícita sem marcador podem conservar a cor do CLI. O tema da extensão VS Code não foi alterado.
+
+## Correção do ícone macOS — 23/10/2026
+
+Confirmado no ICNS instalado: o fundo verde estava presente e o símbolo ausente. A conversão do SVG não preservou o caminho com stroke. Substituído o símbolo por geometria preenchida equivalente e reexportados os dez tamanhos standard/Retina. O novo build-icon.sh verifica os dois componentes do símbolo antes da conversão e o símbolo depois de descodificar o ICNS. Sem alterar permissões ou encerrar sessões para limpar caches do Dock.

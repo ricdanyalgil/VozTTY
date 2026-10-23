@@ -57,3 +57,7 @@ The Claude setup helper can confirm trust only when `VOZ_TEST_TRUST_DISPOSABLE=1
 `test/cli.integration.js` runs through the Extension Development Host, with the actual installed extension, actual CLI processes and a test PTY. It requires `VOZ_TEST_AUDIO`, `VOZ_TEST_RESULT`, `VOZ_TEST_HEADLESS` (an isolated `@xterm/headless` 6.0.0 package path), and `VOZ_TEST_CODEX` / `VOZ_TEST_CLAUDE` executable paths. The speech input is a local synthetic audio file; this test does not open the microphone. The headless renderer is test-only and is not a production dependency.
 
 Read [the validation record](../VALIDACAO.md) before interpreting any test as compatibility or recognition-accuracy evidence.
+
+## App icon
+
+The editable vector is `assets/voztty-icon.svg`. Run `./terminal/build-icon.sh` from the repository root after editing it, then rebuild the app. This asset-only task uses ImageMagick plus macOS sips/iconutil. It exports standard/Retina sizes and checks the terminal glyph before and after ICNS conversion. The glyph uses filled shapes because the previous stroke-based SVG lost its symbol in the converter. ImageMagick is not needed to run the app.

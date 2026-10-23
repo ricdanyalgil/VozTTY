@@ -30,3 +30,7 @@ Não guardar/publicar gravações pessoais, credenciais ou dados de conta. Diagn
 ## Layout atualizado
 
 Novo layout do terminal próprio: perguntas azuis com fundo azul discreto, respostas com as cores normais do CLI, cabeçalho em duas linhas e rodapé com legenda/atalhos. Prévia sintética identificada em assets/terminal-conversation.png, sem dados de conta. Codex real validado com 182 palavras, nenhuma submissão, destaque e seleção preservados. `npm test` agora inclui os dois testes do classificador visual (12 no total). Ler os limites em terminal/README.md: prefixos visuais podem coincidir com citações e não existe metadata universal de papéis nos CLIs. Não recolorir ou modificar o fluxo PTY. As janelas já abertas conservam a versão carregada; a nova UI aplica-se a novas instâncias.
+
+## Ícone macOS corrigido
+
+O ICNS anterior tinha o fundo verde sem o símbolo. SVG corrigido para formas preenchidas; terminal/build-icon.sh regenera tamanhos standard/Retina e verifica o símbolo. Recompilar e reinstalar mantém as janelas abertas; o Dock pode precisar que a aplicação seja reaberta para largar o ícone em cache. Não terminar sessões do responsável para forçar a atualização.

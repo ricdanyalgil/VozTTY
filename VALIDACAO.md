@@ -121,3 +121,5 @@ Publication verified: GitHub repository PUBLIC; v0.2.0 published as a public pre
 Removed the duplicate window buttons from the content header at the maintainer's request. Standard macOS close/minimize/zoom controls remain. The voice header now uses readable language names, a clearer Dictate action, shorter keyboard hints and clearer listening/review guidance. Existing language IDs and preferences are preserved through menu-item represented values.
 
 The native layout regression passed at 1120 → 620 → 800 → 1440 → 1120 px with no grid overflow. All three displayed language choices map to the supported pt-BR, pt-PT and en-US identifiers; the test restores its original selection without changing saved preferences. Local evidence: work/native-021-layout.json. No new microphone run was performed for this UI-only patch.
+
+Native 0.2.1 installed with a verified code signature. Public prerelease v0.2.1 includes the new native ZIP, unchanged VSIX 0.1.2 and checksums. All assets downloaded without authentication and matched local files byte for byte. Previous release assets were not overwritten.

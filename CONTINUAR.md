@@ -2,7 +2,7 @@
 
 ## Publication authorization
 
-The maintainer explicitly authorized making the repository public and publishing both the VS Code extension and the native terminal on GitHub. Earlier instructions to keep development private have been superseded. Public release v0.2.0 is published (not draft), with Terminal 0.2.0 and extension 0.1.2. Repository visibility was verified PUBLIC. All three release assets and the English README were downloaded without authentication and matched the local files. Release: https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.0 . This is a public prerelease; the VS Code Marketplace was not used.
+The maintainer explicitly authorized making the repository public and publishing both the VS Code extension and the native terminal on GitHub. Earlier instructions to keep development private have been superseded. Public release v0.2.1 is published (not draft), with Terminal 0.2.1 and extension 0.1.2. Repository visibility was verified PUBLIC. All three release assets and the English README were downloaded without authentication and matched the local files. Release: https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.1 . This is a public prerelease; the VS Code Marketplace was not used.
 
 ## Current products
 
@@ -28,4 +28,4 @@ Build both packages, inspect their contents, run relevant checks, prepare checks
 
 ## Native 0.2.1 follow-up
 
-The maintainer requested removal of duplicate header window controls. Only standard macOS title-bar controls remain. Native 0.2.1 adds readable spoken-language names, shorter hints and clearer voice actions while preserving language IDs/preferences. VS Code stays at 0.1.2. Prepare and verify the native update and its public patch release without overwriting v0.2.0 artifacts or interrupting open sessions.
+The maintainer requested removal of duplicate header window controls. Only standard macOS title-bar controls remain. Native 0.2.1 adds readable spoken-language names, shorter hints and clearer voice actions while preserving language IDs/preferences. VS Code stays at 0.1.2. Native 0.2.1 is installed and published. All release assets were downloaded anonymously and matched the local files. v0.2.0 artifacts and open sessions were preserved.

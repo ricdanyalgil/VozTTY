@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" fill="none" role="img" aria-labelledby="title description">
+  <title id="title">VozTTY — Your voice. Your terminal.</title>
+  <desc id="description">Local voice dictation for the VS Code terminal on a Mac. An illustrative terminal shows a spoken prompt waiting to be reviewed, without automatic submission.</desc>
+  <rect width="1200" height="480" rx="20" fill="#111B22"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <rect x="52" y="42" width="40" height="40" rx="11" fill="#D8FC87"/>
+    <path d="m63 54 7 8-7 8m11 0h8" stroke="#111B22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="105" y="72" fill="#F4F7F5" font-size="30" font-weight="650" letter-spacing="-.7">VozTTY</text>
+    <text x="52" y="195" fill="#F4F7F5" font-size="76" font-weight="650" letter-spacing="-2">Your voice.</text>
+    <text x="52" y="279" fill="#D8FC87" font-size="76" font-weight="650" letter-spacing="-2">Your terminal.</text>
+    <text x="55" y="332" fill="#C3D0D6" font-size="22">Speak the details. Keep the flow.</text>
+    <path d="M52 390h1096" stroke="#35434A"/>
+    <text x="55" y="435" fill="#C3D0D6" font-size="17">VS Code on macOS</text>
+    <circle cx="262" cy="430" r="2" fill="#768D98"/>
+    <text x="281" y="435" fill="#C3D0D6" font-size="17">On-device recognition</text>
+    <circle cx="498" cy="430" r="2" fill="#768D98"/>
+    <text x="517" y="435" fill="#C3D0D6" font-size="17">You decide when to send</text>
+    <text x="1148" y="435" fill="#D8FC87" font-size="17" text-anchor="end">Preview 0.1.1</text>
+    <rect x="692" y="103" width="456" height="242" rx="13" fill="#1B2A33" stroke="#354A56"/>
+    <path d="M693 148h454" stroke="#354A56"/>
+    <text x="715" y="131" fill="#F4F7F5" font-size="15" font-weight="600">TERMINAL</text>
+    <text x="825" y="131" fill="#A9BDC7" font-size="15">zsh</text>
+    <rect x="1102" y="113" width="30" height="25" rx="6" fill="#D8FC87"/>
+    <g stroke="#111B22" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1114" y="117" width="6" height="10" rx="3"/>
+      <path d="M1111 124v1a6 6 0 0 0 12 0v-1m-6 7v3m-3 0h6"/>
+    </g>
+    <g font-family="SFMono-Regular, Consolas, monospace" font-size="17">
+      <text x="716" y="189" fill="#A9BDC7">~/my-project</text>
+      <text x="716" y="224" fill="#D8FC87">&gt;</text>
+      <text x="739" y="224" fill="#F4F7F5">Plan the next release.</text>
+      <text x="739" y="251" fill="#F4F7F5">Start with what matters</text>
+      <text x="739" y="278" fill="#F4F7F5">to the people using it.</text>
+      <rect x="973" y="263" width="2" height="19" fill="#D8FC87"/>
+    </g>
+    <circle cx="720" cy="318" r="3" fill="#D8FC87"/>
+    <text x="733" y="323" fill="#C3D0D6" font-size="14">Inserted. Ready for your review.</text>
+    <text x="1148" y="371" fill="#A9BDC7" font-size="12" text-anchor="end">Illustrative interface · no automatic Enter</text>
+  </g>
+</svg>

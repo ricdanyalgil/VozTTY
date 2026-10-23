@@ -238,6 +238,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let main = NSMenu()
         let appItem = NSMenuItem()
         let appMenu = NSMenu()
+        let vocabularyItem = appMenu.addItem(withTitle: "Edit Vocabulary…", action: #selector(editVocabulary), keyEquivalent: ",")
+        vocabularyItem.target = self
+        appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Quit VozTTY", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         appItem.submenu = appMenu
         main.addItem(appItem)
@@ -254,6 +257,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #if VOZ_TEST
         if let terminal { Task { await terminal.runIntegrationTest() } }
         #endif
+    }
+    @objc func editVocabulary() {
+        do {
+            try Vocabulary.createFileIfNeeded()
+            if !NSWorkspace.shared.open(Vocabulary.fileURL) {
+                throw NSError(domain: "VozTTY.Vocabulary", code: 2, userInfo: [NSLocalizedDescriptionKey: "Could not open vocabulary.txt in your text editor."])
+            }
+        } catch {
+            NSAlert(error: error).runModal()
+        }
     }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard let terminal else { return .terminateNow }

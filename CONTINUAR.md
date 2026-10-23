@@ -43,3 +43,9 @@ The voice panel now has a full-width continuous 20-second intensity history with
 ## Native 0.2.4 compact voice line
 
 Replaced the large voice card with a transparent, borderless 40 px line: muted monospace status/duration, a 28 px continuous waveform, and small text controls with 40 px targets. Recent 20-second history and pause markers remain. Narrow-window styles truncate only the status text. Recognition and pause behavior are unchanged. Public release assets still remain 0.2.1.
+
+## Shared vocabulary — Terminal 0.2.5 / extension 0.1.3
+
+Added a shared local `~/Library/Application Support/VozTTY/vocabulary.txt` file, loaded before each capture by the speech helper. This normalizes final text; it does not train or bias Apple's SpeechTranscriber. Native app menu (Command-comma) and VS Code Command Palette open the same file. Defaults contain assistant/product names only; personal project entries are local and must not be committed. Empty file disables correction. Invalid files fail before microphone capture.
+
+Validation: 16 JavaScript tests, native vocabulary assertions and existing real-PTY/no-Enter checks pass. Synthetic English audio returned “Claude Code, Codex, Gemini, Blue Off.” The explicit Cloud Code alias works; Blue Auth remains an acoustic-recognition limitation unless its observed alternatives are registered. No new natural-voice/microphone or GUI verification. Native and VSIX builds pass. Public releases and Marketplace unchanged.

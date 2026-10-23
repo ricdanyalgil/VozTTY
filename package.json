@@ -1,8 +1,8 @@
 {
   "name": "voz-terminal",
-  "displayName": "VozTTY — Voice Dictation",
+  "displayName": "VozTTY \u2014 Voice Dictation",
   "description": "Local voice dictation inside VS Code terminals on Mac. No clipboard and no automatic Enter.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "danyalgil",
   "license": "MIT",
   "engines": {
@@ -19,7 +19,7 @@
     "onStartupFinished"
   ],
   "scripts": {
-    "test": "node --test test/dictation.test.js test/prompt-rows.test.js test/voice-wave.test.js"
+    "test": "node --test test/dictation.test.js test/prompt-rows.test.js test/voice-wave.test.js test/vocabulary-command.test.js"
   },
   "contributes": {
     "commands": [
@@ -40,6 +40,10 @@
         "title": "VozTTY: Cancel Dictation",
         "icon": "$(close)",
         "enablement": "voz.active"
+      },
+      {
+        "command": "voz.editVocabulary",
+        "title": "VozTTY: Edit Vocabulary"
       }
     ],
     "menus": {

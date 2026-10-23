@@ -44,7 +44,7 @@ Checks terminal control removal, preserved Unicode/punctuation, a real child PTY
 
 ## Integration harness
 
-`test/terminal.integration.swift` is compiled only with `-D VOZ_TEST` and is excluded from the normal app. Compile it with the four Swift files in this directory, place that executable in a temporary copy of the built app, and ad hoc sign the copy before running it. Do not replace the installed application with the test executable.
+`test/terminal.integration.swift` is compiled only with `-D VOZ_TEST` and is excluded from the normal app. Compile it with the four Swift files in this directory and `native/Vocabulary.swift`, place that executable in a temporary copy of the built app, and ad hoc sign the copy before running it. Do not replace the installed application with the test executable.
 
 The harness requires `VOZ_TEST_RESULT`. Modes:
 
@@ -67,3 +67,14 @@ Read [the validation record](../VALIDACAO.md) before interpreting any test as co
 ## App icon
 
 The editable vector is `assets/voztty-icon.svg`. Run `./terminal/build-icon.sh` from the repository root after editing it, then rebuild the app. This asset-only task uses ImageMagick plus macOS sips/iconutil. It exports standard/Retina sizes and checks the terminal glyph before and after ICNS conversion. The glyph uses filled shapes because the previous stroke-based SVG lost its symbol in the converter. ImageMagick is not needed to run the app.
+
+## Vocabulary checks
+
+From the repository root:
+
+```sh
+xcrun swiftc native/Vocabulary.swift test/vocabulary.unit.swift -o /tmp/voztty-vocabulary-test
+/tmp/voztty-vocabulary-test
+```
+
+The shared helper loads the local vocabulary before recording. Both native and VS Code clients receive the corrected final event through the existing protocol. Vocabulary tests cover canonical spelling, explicit aliases, Unicode/word boundaries, longest matches, literal regex characters, single-pass replacement, empty files and invalid entries. The packaged `vocabulary.txt` starter must match the Swift defaults.

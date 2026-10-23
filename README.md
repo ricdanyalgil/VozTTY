@@ -77,6 +77,28 @@ Install the VSIX, open an integrated terminal and click its microphone icon. You
 
 The extension ID remains `danyalgil.voz-terminal`. Set **Voz: Language** (`voz.language`) to `pt-BR`, `pt-PT` or `en-US`; the default is `pt-BR`. Switching or closing the source terminal cancels an active recording.
 
+## Personal vocabulary (source builds)
+
+VozTTY can normalize the spelling of assistant and project names after transcription, entirely on your Mac. Built-in entries include **Claude, Claude Code, Codex, OpenAI Codex, Gemini and VozTTY**; for example, “Cloud Code” becomes “Claude Code”. The word “cloud” on its own is preserved.
+
+In the native app, choose **VozTTY → Edit Vocabulary…** (`⌘,`). In VS Code, run **VozTTY: Edit Vocabulary** from the Command Palette. Both use the same local file:
+
+```text
+~/Library/Application Support/VozTTY/vocabulary.txt
+```
+
+Save one preferred name per line. Add explicit alternatives after `=`, separated by `|`:
+
+```text
+Claude Code = Cloud Code
+BlueAuth = Blue Auth
+MyProject = My Project | Mai Project
+```
+
+Changes apply to the next recording, with no app restart. Matches ignore case and respect word boundaries; longer phrases win, and replacements are applied once. Use at most 100 names and alternatives, each 1–80 characters, in a UTF-8 file up to 32 KB. Blank lines and lines starting with `#` are ignored. An empty file disables all corrections; delete the file to restore the defaults. Invalid files stop dictation before microphone capture and show an error.
+
+This is explicit text correction, **not acoustic model training or a guarantee of recognition accuracy**. Register specific alternatives to avoid changing words you intended to say. Project names stay in this local file and are not committed or uploaded by VozTTY. Transcripts remain editable and are never submitted automatically. Public 0.2.1/0.1.2 downloads do not include this feature yet.
+
 ## Compatibility and validation
 
 | Client / check | Verified behavior |
@@ -134,7 +156,7 @@ open terminal/VozTTY.app
 # VS Code extension
 ./build-helper.sh
 npx @vscode/vsce@4.0.0 package --no-dependencies --target darwin-arm64 \
-  --out voztty-0.1.2-darwin-arm64.vsix
+  --out voztty-0.1.3-darwin-arm64.vsix
 ```
 
 No npm install is required for production dependencies. Native checks, test-only integration hooks and icon generation are described in [`terminal/README.md`](terminal/README.md).

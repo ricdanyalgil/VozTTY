@@ -6,7 +6,7 @@ stage=$(mktemp -d "${TMPDIR:-/tmp}/voz-engine.XXXXXX")
 trap 'rm -rf -- "$stage"' EXIT
 app="$stage/VozEngine.app"
 mkdir -p "$app/Contents/MacOS"
-xcrun swiftc -parse-as-library -swift-version 6 -O -target arm64-apple-macos26.0 native/VoiceEngine.swift -o "$app/Contents/MacOS/VozEngine" -framework AppKit -framework AVFoundation -framework Speech
+xcrun swiftc -parse-as-library -swift-version 6 -O -target arm64-apple-macos26.0 native/VoiceEngine.swift native/Vocabulary.swift -o "$app/Contents/MacOS/VozEngine" -framework AppKit -framework AVFoundation -framework Speech
 cat > "$app/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

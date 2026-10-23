@@ -1,6 +1,8 @@
 'use strict';
 const vscode = require('vscode');
 const path = require('node:path');
+const fs = require('node:fs/promises');
+const os = require('node:os');
 const { Dictation } = require('./dictation');
 
 function activate(context) {
@@ -18,6 +20,17 @@ function activate(context) {
   });
   context.subscriptions.push(
     indicator, dictation,
+    vscode.commands.registerCommand('voz.editVocabulary', async () => {
+      const file = path.join(os.homedir(), 'Library', 'Application Support', 'VozTTY', 'vocabulary.txt');
+      try {
+        await fs.mkdir(path.dirname(file), { recursive: true, mode: 0o700 });
+        try {
+          await fs.copyFile(path.join(context.extensionPath, 'vocabulary.txt'), file, require('node:fs').constants.COPYFILE_EXCL);
+          await fs.chmod(file, 0o600);
+        } catch (error) { if (error.code !== 'EEXIST') throw error; }
+        await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(vscode.Uri.file(file)));
+      } catch (error) { void vscode.window.showErrorMessage(`Could not open vocabulary: ${error.message}`); }
+    }),
     vscode.commands.registerCommand('voz.toggle', () => dictation.start()),
     vscode.commands.registerCommand('voz.stop', () => dictation.stop()),
     vscode.commands.registerCommand('voz.cancel', () => dictation.cancel()),

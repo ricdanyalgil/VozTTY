@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Terminal 0.2.5 / VS Code 0.1.3
+
+- Shared local vocabulary with preferred spellings and explicit alternatives after transcription.
+- Native Edit Vocabulary menu and VS Code Command Palette action; no additional terminal UI.
+- Whole-word, case-insensitive, longest-first, single-pass correction; bounded UTF-8 configuration validated before microphone capture.
+- Existing no-Enter and no-clipboard behavior preserved. Public preview downloads remain unchanged.
+
 ## Public preview v0.2.1 — 2026-10-23
 
 Native terminal update; the VS Code extension remains 0.1.2.

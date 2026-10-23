@@ -30,6 +30,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     var meterEnabled = false
     var meterTask: Task<Void, Never>?
     var paused = false
+    var vocabulary: Vocabulary?
 
     func prepare(language: String, inputFile: String?) async {
         do {
@@ -38,6 +39,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
             guard let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale(identifier: language)) else {
                 throw VoiceError.message("This language is not supported by local speech recognition on this Mac.")
             }
+            vocabulary = try Vocabulary.load()
             let transcriber = SpeechTranscriber(locale: locale, preset: .transcription)
             module = transcriber
             if let download = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) {
@@ -130,7 +132,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
             let text = try await output.value
             try Task.checkCancellation()
             try cleanup()
-            emit("final", "text", text, metadata: ["audioSeconds": String(audioSeconds), "captureSeconds": String(captureSeconds)])
+            emit("final", "text", vocabulary?.apply(to: text) ?? text, metadata: ["audioSeconds": String(audioSeconds), "captureSeconds": String(captureSeconds)])
             exit(0)
         } catch {
             await analysis.cancelAndFinishNow()

@@ -1,0 +1,8 @@
+# One name per line. Optional alternatives: Preferred name = alternative | another alternative
+# Matches whole words only, ignoring case. Use short, specific phrases.
+Claude
+Claude Code = Cloud Code
+Codex
+OpenAI Codex = OpenI Codex
+Gemini
+VozTTY

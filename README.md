@@ -88,6 +88,7 @@ Tests check **draft insertion**, not whether an assistant generated a response. 
 | :--- | :--- |
 | Core extension behavior | 10 unit tests passing: sanitization, targeting, cancellation and failures |
 | Native shell / PTY | Real input, resize and a check that execution needs Enter |
+| Maintainer voice in the native terminal | Short microphone tests confirmed in Codex, Claude Code and Antigravity; proper names may need correction |
 | Short voice capture in VS Code | Acoustic test passed; maintainer also confirmed their own voice in a normal shell |
 | Long voice capture in VozTTY Terminal | Controlled physical-microphone test: **82 seconds, 182 recognized words**, opening and closing preserved, existing prefix retained, no Enter |
 | Codex CLI in VozTTY Terminal | Long draft visible in the actual composer, left unsent |

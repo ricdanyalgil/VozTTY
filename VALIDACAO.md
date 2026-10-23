@@ -75,3 +75,7 @@ Após o responsável concluir login e termos, Antigravity CLI 1.4.6 abriu Gemini
 Em 23/10/2026, o responsável repetiu o teste com o microfone e confirmou sucesso no Antigravity, mostrando o rascunho “Testando o microfone testando o microfone.” no compositor. Confirma ditado curto com a voz natural; não equivale a um novo teste longo.
 
 Na continuação, a aplicação instalada abriu Codex 0.163.0 e a UI mostrou o ditado natural do responsável “Testando o microfone no OpenI Codex.” como rascunho. Nenhum prompt foi submetido pelo agente. A sessão herdou a configuração local YOLO e abriu em /; definir uma pasta de projeto e permissões antes de executar trabalho. A transcrição de nomes próprios pode precisar de revisão.
+
+## Confirmação manual do responsável — Claude Code
+
+Em 23/10/2026, o responsável mostrou Claude Code 2.1.309, Opus 5.5, aberto na pasta VozTTY. A frase ditada “Testando o microfone no Cloud, testando o microfone do Cloud.” foi recebida e respondida pelo Claude. Confirma o percurso de voz natural até ao CLI, com substituição do nome Claude por Cloud; rever nomes próprios antes de enviar. O envio foi feito pelo responsável, não pelo teste automatizado. Com esta confirmação, os três clientes — Codex, Claude Code e Antigravity — têm teste manual curto de microfone confirmado. Não equivale a teste longo com a voz natural. Os avisos de regras e expiração do login pertencem à configuração do Claude e não foram alterados.

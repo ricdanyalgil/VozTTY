@@ -3,7 +3,7 @@
 <p align="center"><strong>Speak your next prompt. Stay in your terminal.</strong><br />Local voice dictation for your Mac terminal and VS Code.<br />Speak freely. Review the text. Press Enter when you are ready.</p>
 
 <p align="center">
-  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.6"><img src="https://img.shields.io/github/v/release/ricdanyalgil/VozTTY?include_prereleases&amp;label=public%20preview&amp;style=flat" alt="Public preview release" /></a>
+  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.6"><img src="https://img.shields.io/badge/public_preview-v0.2.6-orange?style=flat" alt="Public preview release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="MIT license" /></a>
   <img src="https://img.shields.io/badge/macOS-26%2B-black?logo=apple&amp;style=flat" alt="macOS 26 or later" />
   <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-555555?style=flat" alt="Apple Silicon arm64" />
@@ -19,6 +19,8 @@
 
 <img src="assets/voice-demo.gif" width="1100" alt="Edited walkthrough of the real VozTTY app: a synthetic audio file is transcribed locally and inserted as an unsent prompt." />
 <p align="center"><sub>20-second edited walkthrough of the real app and Apple recognizer, using a synthetic audio file through a temporary demo adapter. No live microphone or assistant is connected in this clip. Frames are held for readability; this is not elapsed transcription time or an accuracy benchmark.</sub></p>
+
+[Download the 20-second demo video](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/voztty-demo.mp4).
 
 ## Your voice, where you already work
 

@@ -73,11 +73,15 @@ The extension has no npm production dependencies. Apple's frameworks and languag
 
 ## Validation
 
-Nine automated tests cover text handling, terminal targeting, cancellation, malformed responses and process failures. A VS Code Extension Development Host test also passed using a synthetic Portuguese recording, the real Apple transcription engine and a test pseudo-terminal. It verified a single insertion without Return or Escape characters, including with the installed VSIX contents.
+Ten automated tests cover text handling, terminal targeting, cancellation, malformed responses and process failures. A VS Code Extension Development Host test also passed using a synthetic Portuguese recording, the real Apple transcription engine and a test pseudo-terminal. It verified a single insertion without Return or Escape characters, including with the installed VSIX contents.
 
-The microphone button was observed in a running VS Code window. Real microphone capture, denied permissions, actual input in each assistant CLI, remote workspaces and long-dictation resource use remain to be tested.
+The microphone button was observed in a running VS Code window. A physical-microphone acoustic test also passed: the Mac played a synthetic Portuguese phrase through its speakers, the helper captured it through the microphone, and VS Code received one transcript without Enter or Escape. Cancellation, restarting and helper shutdown passed. The maintainer also confirmed a successful manual dictation with their own voice in a normal VS Code terminal. This is an initial voice check, not a long-form accuracy benchmark. Denied permissions on a fresh installation, actual input in each assistant CLI, remote workspaces and long-dictation resource use remain to be tested.
+
+Version 0.1.1 fixes a shutdown race that generated `SIGPIPE` in the VS Code extension host after successful transcription. The extension now uses the helper's existing graceful signal handler instead of writing a cancellation command into a pipe that may already be closed.
 
 `test/integration.js` is the Extension Development Host test entrypoint. It requires `VOZ_TEST_AUDIO` pointing to a synthetic speech file; `VOZ_TEST_RESULT` optionally writes the test result. It does not open the microphone or execute shell commands in the test terminal.
+
+`test/microphone.integration.js` is an opt-in hardware test. Run it through the Extension Development Host with `VOZ_TEST_MICROPHONE=1` and `VOZ_TEST_RESULT` pointing to an output JSON file. It opens the real microphone and plays a test phrase through the current speakers without changing audio settings. Results contain state changes and counts, not audio or transcript contents.
 
 ## Next stage
 

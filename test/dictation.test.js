@@ -101,6 +101,27 @@ test('a process crash resets the session without inserting text', () => {
   assert.deepEqual(s.writes, []);
 });
 
+test('finishing never writes to a helper pipe that may already be closed', () => {
+  for (const action of ['final', 'cancel', 'error']) {
+    const s = setup();
+    const signals = [];
+    const kill = s.child.kill;
+    s.child.kill = signal => { signals.push(signal); kill(); };
+    s.dictation.start(); s.event({ type: 'ready' });
+    if (action === 'final') {
+      s.dictation.stop();
+      s.event({ type: 'final', text: 'Texto para rever.' });
+      assert.equal(s.child.stdin.read().toString(), 'stop\n');
+    } else {
+      if (action === 'cancel') s.dictation.cancel();
+      else s.event({ type: 'error', message: 'Microfone indisponível' });
+      assert.equal(s.child.stdin.read(), null);
+    }
+    assert.deepEqual(signals, ['SIGTERM']);
+    assert.equal(s.dictation.session, undefined);
+  }
+});
+
 test('does not start a helper without a selected terminal', () => {
   const s = setup();
   s.vscode.window.activeTerminal = undefined;

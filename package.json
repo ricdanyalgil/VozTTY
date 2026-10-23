@@ -2,7 +2,7 @@
   "name": "voz-terminal",
   "displayName": "VozTTY — Ditado no Terminal",
   "description": "Microfone no terminal do VS Code. Ditado local no Mac, sem clipboard e sem envio automático.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "danyalgil",
   "license": "MIT",
   "engines": {

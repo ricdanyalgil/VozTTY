@@ -36,10 +36,16 @@ Requer VS Code desktop, Apple Silicon e macOS 26 ou superior. A extensão é exe
 
 ## Instalar o pacote
 
-No VS Code, abra **Extensions → … → Install from VSIX…** e selecione o ficheiro `voztty-0.1.0-darwin-arm64.vsix` disponível em Releases. Se o painel Terminal não mostrar o microfone depois da instalação, execute **Developer: Reload Window** quando puder interromper a janela atual.
+No VS Code, abra **Extensions → … → Install from VSIX…** e selecione o ficheiro `voztty-0.1.1-darwin-arm64.vsix` disponível em Releases. Se o painel Terminal não mostrar o microfone depois da instalação, execute **Developer: Reload Window** quando puder interromper a janela atual.
 
 ## Desenvolvimento
 
 `./build-helper.sh` compila o componente Swift com as ferramentas da Apple. `npm test` executa os testes da entrega de texto, sem gravar áudio. Não há dependências npm de produção.
 
 O teste `test/integration.js` é executado pelo Extension Development Host do VS Code: usa uma gravação sintética definida em `VOZ_TEST_AUDIO`, o motor real da Apple e um pseudo-terminal de teste para confirmar que o texto chega uma única vez e sem Enter. Não abre o microfone nem executa comandos de shell.
+
+## Validação da versão 0.1.1
+
+Os dez testes automatizados passaram. No VS Code, o teste acústico reproduziu uma frase sintética pelos altifalantes e captou-a pelo microfone físico: chegou uma única transcrição ao terminal, sem Enter ou Escape. Cancelar, recomeçar e encerrar o motor também passaram. A versão corrige uma tentativa de escrita num canal já fechado que gerava `SIGPIPE` após a transcrição.
+
+O teste `test/microphone.integration.js` exige `VOZ_TEST_MICROPHONE=1` e `VOZ_TEST_RESULT` com o caminho do resultado JSON. Abre o microfone e reproduz a frase no dispositivo de saída atual, sem alterar as definições de áudio. Guarda apenas estados e contagens. O responsável também confirmou o ditado com a própria voz num terminal normal do VS Code. Ainda falta avaliar a recusa de permissões numa instalação nova, os campos reais de Claude Code/Codex/Gemini CLI, sessões remotas e ditados longos.

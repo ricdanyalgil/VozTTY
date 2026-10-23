@@ -104,7 +104,8 @@ class Dictation {
     clearTimeout(session.timer);
     this.changed('idle', session.terminal);
     if (session.child && session.child.exitCode === null && !session.child.killed) {
-      session.child.stdin.end('cancel\n');
+      // The helper handles SIGTERM with cleanup; a pipe write after its final event can raise SIGPIPE in VS Code.
+      session.child.kill('SIGTERM');
       const kill = setTimeout(() => { if (session.child.exitCode === null) session.child.kill('SIGKILL'); }, 2000);
       kill.unref();
       session.child.once('close', () => clearTimeout(kill));

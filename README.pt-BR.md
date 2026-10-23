@@ -1,12 +1,25 @@
-# VozTTY — Ditado no Terminal do VS Code
+# VozTTY — A sua voz no terminal
 
-**Fale o próximo prompt sem sair do terminal.** Projeto open source com licença MIT. [English](README.md) · [Releases](https://github.com/ricdanyalgil/VozTTY/releases)
+**Fale o próximo prompt sem sair do terminal.** Projeto privado a caminho de uma versão open source com licença MIT. [English](README.md) · [Releases](https://github.com/ricdanyalgil/VozTTY/releases)
 
 **Estado de publicação:** desenvolvimento privado e primeira release em rascunho. O repositório e a versão só devem tornar-se públicos depois de validar a primeira versão e de o responsável aprovar a publicação. A licença MIT já está preparada para essa abertura futura.
 
 Microfone na barra do terminal, com reconhecimento local no Mac e inserção direta no prompt. Não lê nem escreve no clipboard e não acrescenta Enter.
 
-## Usar
+## Terminal próprio para Mac — prévia 0.2.0
+
+Já existe uma primeira aplicação nativa: uma janela, uma sessão de shell real e o botão **Dictate / Stop & insert** na própria barra. Usa AppKit, WebKit e xterm.js local, sem runtime Node.js. O mesmo motor de voz serve a extensão e o terminal próprio.
+
+Com as ferramentas de desenvolvimento da Apple instaladas:
+
+```sh
+./terminal/build.sh
+open terminal/VozTTY.app
+```
+
+Por omissão abre `/bin/zsh -l`. Execute os seus comandos `claude`, `codex` ou `gemini` dentro da shell; não estão incluídos na aplicação. Ainda não há tabs, divisões, restauro de sessões ou notarização. Fechar uma sessão ativa pede confirmação e descarta o texto não enviado.
+
+## Usar no VS Code
 
 1. Abra o terminal integrado e selecione a sessão em que quer escrever.
 2. Clique no ícone de microfone na barra do painel, junto aos controlos do terminal. Também pode executar **Voz: Começar ditado no terminal** na Paleta de Comandos.
@@ -36,7 +49,7 @@ Requer VS Code desktop, Apple Silicon e macOS 26 ou superior. A extensão é exe
 
 ## Instalar o pacote
 
-No VS Code, abra **Extensions → … → Install from VSIX…** e selecione o ficheiro `voztty-0.1.1-darwin-arm64.vsix` disponível em Releases. Se o painel Terminal não mostrar o microfone depois da instalação, execute **Developer: Reload Window** quando puder interromper a janela atual.
+No VS Code, abra **Extensions → … → Install from VSIX…** e selecione o ficheiro `voztty-0.1.1-darwin-arm64.vsix` fornecido pelo responsável ou compilado a partir do repositório privado. Se o painel Terminal não mostrar o microfone depois da instalação, execute **Developer: Reload Window** quando puder interromper a janela atual.
 
 ## Desenvolvimento
 
@@ -48,4 +61,8 @@ O teste `test/integration.js` é executado pelo Extension Development Host do VS
 
 Os dez testes automatizados passaram. No VS Code, o teste acústico reproduziu uma frase sintética pelos altifalantes e captou-a pelo microfone físico: chegou uma única transcrição ao terminal, sem Enter ou Escape. Cancelar, recomeçar e encerrar o motor também passaram. A versão corrige uma tentativa de escrita num canal já fechado que gerava `SIGPIPE` após a transcrição.
 
-O teste `test/microphone.integration.js` exige `VOZ_TEST_MICROPHONE=1` e `VOZ_TEST_RESULT` com o caminho do resultado JSON. Abre o microfone e reproduz a frase no dispositivo de saída atual, sem alterar as definições de áudio. Guarda apenas estados e contagens. O responsável também confirmou o ditado com a própria voz num terminal normal do VS Code. Ainda falta avaliar a recusa de permissões numa instalação nova, os campos reais de Claude Code/Codex/Gemini CLI, sessões remotas e ditados longos.
+O teste `test/microphone.integration.js` exige `VOZ_TEST_MICROPHONE=1` e `VOZ_TEST_RESULT` com o caminho do resultado JSON. Abre o microfone e reproduz a frase no dispositivo de saída atual, sem alterar as definições de áudio. Guarda apenas estados e contagens. O responsável também confirmou o ditado com a própria voz num terminal normal do VS Code. Os testes posteriores passaram nos campos reais do Claude Code e Codex, tanto pelo terminal de teste do VS Code como no terminal próprio, sem Enter. O Gemini continua bloqueado pela autenticação do serviço.
+
+No terminal próprio, o ensaio acústico longo controlado captou 82 segundos e entregou 182 palavras, com início, fim e prefixo anterior preservados. Ensaios acústicos anteriores perderam partes do texto; continuam a ser necessários testes com fala longa natural do responsável. Não é um benchmark de precisão. Consulte [VALIDACAO.md](VALIDACAO.md).
+
+Ainda falta avaliar a recusa de permissões numa instalação nova, sessões remotas, uso continuado do terminal próprio e autenticação/compositor do Gemini.

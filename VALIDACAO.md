@@ -1,29 +1,63 @@
-# Validação 0.1.1 — 2026-10-23
+# Validação privada — 2026-10-23
 
-Estado: desenvolvimento privado. A release v0.1.0 continua em rascunho. A publicação depende da aprovação do responsável.
+Repositório privado, release v0.1.0 em rascunho. Nenhuma publicação pública autorizada. Extensão instalada: 0.1.1. Terminal próprio: primeira versão nativa 0.2.0, ainda experimental e sem notarização.
 
-## Confirmado
+## Matriz verificada
 
-- Dez testes unitários passaram, incluindo a regressão do encerramento do motor.
-- O pacote 0.1.1 foi instalado e identificado pelo VS Code como `danyalgil.voz-terminal@0.1.1`.
-- A assinatura ad hoc do componente nativo instalado passou na verificação estrita.
-- Teste acústico no Extension Development Host com o conteúdo exato do pacote instalado: frase sintética reproduzida pelos altifalantes e captada pelo microfone físico. Não usou entrada de ficheiro nem clipboard.
-- Estados observados: preparar → gravar → cancelar → preparar → gravar → transcrever → inativo.
-- Resultado: uma entrega de 60 caracteres ao pseudo-terminal; sem Return, Escape ou duplicação. O motor encerrou e o host terminou com código zero, sem SIGPIPE no log.
-- O responsável confirmou depois o ditado com a própria voz num terminal zsh de uma janela normal do VS Code. O texto apareceu no prompt e o responsável respondeu “funcionou”. O conteúdo pessoal não é guardado neste relatório.
+| Ambiente | Entrada | Resultado |
+| --- | --- | --- |
+| Extensão VS Code | 10 testes unitários | Passaram; controlos, Unicode, terminal de origem, cancelamento, falhas e encerramento |
+| Extensão VS Code / terminal normal | Microfone físico curto + voz do responsável | Teste acústico passou; responsável confirmou manualmente o ditado |
+| Terminal nativo / PTY | Texto sem Enter; depois Enter explícito de controlo | O programa só recebeu uma submissão depois do Enter de controlo; resize passou |
+| Terminal nativo / gravação longa controlada | Reprodução pelos altifalantes + microfone físico | 82,10 s de áudio; 82,11 s indicados pelo gravador; 182 palavras reconhecidas; início e fim preservados; prefixo anterior preservado; sem Enter |
+| Terminal nativo / Codex CLI 0.163.0 | Transcrição longa em sessão nova | Rascunho visível, prefixo preservado, sessão ativa, sem Enter |
+| Terminal nativo / Claude Code 2.1.309 | Transcrição longa em sessão nova | Bloco `Pasted text` mantido no compositor, prefixo preservado, sem Enter |
+| VS Code / Codex CLI 0.163.0 | Ficheiro sintético longo, ASR real, processo CLI e PTY reais | 182 palavras, 1121 caracteres; bloco de conteúdo colado visível; sem Return |
+| VS Code / Claude Code 2.1.309 | Mesmo percurso ASR → extensão → PTY → CLI | 182 palavras, 1121 caracteres; rascunho/bloco visível; sem Return |
+| Gemini CLI | Abertura e autenticação | Bloqueado pelo serviço: cliente não suportado para a conta Google atual. Sem validação do compositor |
 
-## Correção
+Os testes dos CLIs deixaram os textos **por enviar**. Não se pediu uma resposta aos modelos, nem se autorizou execução de tarefas por esses agentes. O percurso do VS Code usou o conteúdo da extensão instalada 0.1.1 e um pseudo-terminal de teste com processo CLI real; não é uma sessão do responsável reutilizada.
 
-Após devolver o evento final, o motor termina. A extensão escrevia ainda `cancel` no stdin desse processo, podendo atingir um pipe já fechado e gerar SIGPIPE no host do VS Code. Agora reutiliza o tratamento de SIGTERM do motor para encerrar com limpeza, mantendo a escalada para SIGKILL se necessário. O teste de regressão verifica que a conclusão e o cancelamento não escrevem nesse pipe.
+## Fala longa: calibração e limites
 
-A janela do Extension Development Host fecha automaticamente ao terminar o teste. Esse fecho também foi observado pelo responsável e distinguido do funcionamento numa janela normal, que permanece aberta.
+O parágrafo de teste tem 182 palavras e está em `test/fixtures/long-dictation.txt`. Dois primeiros ensaios acústicos produziram cerca de 160 palavras, com perda de partes do início ou do fim. Não foram tratados como aprovação da cobertura da fala.
+
+A leitura direta do ficheiro sintético preservou início e fim, ajudando a separar reconhecimento/inserção da captação acústica. No ensaio controlado final, com estabilização antes da reprodução e sem novas janelas de CLI a arrancar durante a medição, a duração do ficheiro coincidiu com a do gravador e as 182 palavras chegaram ao prompt. A contagem não garante correspondência palavra por palavra: termos e pontuação podem ser substituídos.
+
+Isto **não é** um benchmark de precisão nem uma validação da fala longa natural do responsável. Esse teste continua pendente. Nos ensaios de inserção, compara-se o texto efetivamente reconhecido com os bytes entregues ao PTY, não com uma transcrição inventada.
+
+O motor devolve apenas as durações como metadados adicionais, sem guardar áudio ou histórico de texto. Os ficheiros locais de diagnóstico não são publicados no repositório. A imagem do README mostra apenas material sintético de teste.
+
+## Gemini
+
+O Gemini abriu inicialmente na versão 0.45.0, iniciou o seu próprio atualizador e passou para 0.65.0. O erro do serviço persistiu depois da atualização: `This client is no longer supported for Gemini Code Assist for individuals`. A janela de autenticação ficou disponível para o responsável; não se extraíram credenciais nem se contornou a autenticação. O teste é pendente, não aprovado.
+
+## Segurança dos testes
+
+- Sessões novas, diretórios temporários e prompts sintéticos.
+- Codex em sandbox de leitura e sem daemon partilhado.
+- Claude em safe mode, sem ferramentas nem MCP adicionais. Confirmação de pasta limitada a um diretório de teste vazio.
+- Gemini mantido sem confiança na pasta e sem extensões adicionais.
+- Ausência de Return confirmada na entrega ao PTY. Claude/Codex podem representar colagens longas como blocos recolhidos; isso não significa envio.
+- Assinaturas ad hoc verificadas, incluindo o helper incorporado no terminal.
+
+## Correções e implementação
+
+A extensão 0.1.1 já corrigia a escrita de `cancel` num pipe que podia estar fechado, gerando SIGPIPE depois da transcrição. Usa o encerramento gracioso do helper por SIGTERM e mantém a escalada para SIGKILL se necessário.
+
+O novo terminal utiliza o mesmo helper, uma shell em PTY, AppKit e xterm.js em WebKit. A saída do PTY é passada como bytes, a entrada de voz usa o caminho de paste do xterm e a escrita respeita bracketed paste quando o programa o solicita. O frontend só carrega recursos locais e bloqueia navegação externa. Erros de entrega preservam o ditado numa janela de recuperação.
+
+Durante a construção, os testes detetaram uma leitura de pipe que esperava mais bytes antes de atualizar o frontend; foi substituída por leitura POSIX da quantidade disponível. Os testes nativos cobrem a shell e a ausência de submissão sem Enter.
+
+Os primeiros testes de CLI no VS Code tinham pressupostos errados sobre blocos de colagem e prontidão do ecrã de confiança. O harness foi corrigido e os dois testes finais passaram. Não houve alteração do comportamento de envio da extensão para os fazer passar.
 
 ## Por validar
 
-Campos interativos reais de Claude Code, Codex CLI e Gemini CLI; ditados longos; recusa de permissões numa instalação nova; sessões remotas. O componente não está notarizado pela Apple. Não publicar o projeto ou a release sem aprovação.
+- Fala longa natural do responsável e mais condições acústicas.
+- Compositor do Gemini depois de resolver o método de autenticação.
+- Instalação limpa com permissões recusadas e interrupções de áudio.
+- Sessões remotas e uso prolongado/recursos sob carga.
+- Terminal nativo: estabilidade continuada, acessibilidade completa e distribuição notarizada. Ainda só tem uma janela/sessão, sem tabs nem restauro.
+- Recaptura visual do build final: o Mac bloqueou antes da captura após os ajustes menores de foco/cor do microfone. A revisão independente devolveu `recapture`; não houve aprovação visual final. A captura atual do README é do ensaio anterior do protótipo.
 
-## Repetir
-
-`npm test` executa os testes unitários sem abrir o microfone.
-
-O ponto de entrada `test/microphone.integration.js` exige o Extension Development Host, `VOZ_TEST_MICROPHONE=1` e `VOZ_TEST_RESULT` com o caminho do resultado. O teste abre o microfone, reproduz uma frase e fecha a sua janela ao terminar. Não usar essa janela para avaliar se a extensão mantém uma janela normal aberta.
+Os testes automatizados fecham apenas as suas próprias janelas quando terminam. Uma janela normal do VozTTY ou do VS Code permanece aberta.

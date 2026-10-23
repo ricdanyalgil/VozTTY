@@ -6,3 +6,5 @@ build-helper.sh
 VALIDACAO.md
 CONTRIBUTING.md
 .gitignore
+
+terminal/**

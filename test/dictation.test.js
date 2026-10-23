@@ -34,7 +34,7 @@ test('inserts exactly once into the origin, explicitly without Enter, only after
   s.event({ type: 'ready' });
   assert.deepEqual(s.writes, []);
   s.dictation.stop();
-  s.event({ type: 'final', text: 'Olá.\nQuero rever isto!' });
+  s.event({ type: 'final', text: 'Olá.\nQuero rever isto!', audioSeconds: '82.1', captureSeconds: '82.11' });
   s.event({ type: 'final', text: 'duplicado' });
   assert.deepEqual(s.writes, [['Olá. Quero rever isto!', false]]);
   assert.deepEqual(s.states, ['preparing', 'recording', 'stopping', 'idle']);

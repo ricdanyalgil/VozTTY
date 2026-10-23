@@ -18,8 +18,8 @@ cat > "$app/Contents/Info.plist" <<'PLIST'
 <key>CFBundleVersion</key><string>1</string>
 <key>LSMinimumSystemVersion</key><string>26.0</string>
 <key>LSUIElement</key><true/>
-<key>NSMicrophoneUsageDescription</key><string>O Voz transcreve o seu ditado para o prompt do terminal do VS Code quando você clica no microfone.</string>
-<key>NSSpeechRecognitionUsageDescription</key><string>O Voz reconhece a fala localmente no Mac para inserir texto no terminal do VS Code.</string>
+<key>NSMicrophoneUsageDescription</key><string>O VozTTY transcreve o seu ditado para o terminal em que iniciou a gravação quando clica no microfone.</string>
+<key>NSSpeechRecognitionUsageDescription</key><string>O VozTTY reconhece a fala localmente no Mac para inserir texto no terminal escolhido.</string>
 </dict></plist>
 PLIST
 xattr -cr "$app"

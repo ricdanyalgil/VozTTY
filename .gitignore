@@ -11,3 +11,5 @@ native/*.app/
 .env
 .env.*
 work/
+
+terminal/*.app/

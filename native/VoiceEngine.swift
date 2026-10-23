@@ -3,8 +3,9 @@ import AVFoundation
 import Speech
 
 @MainActor
-func emit(_ type: String, _ key: String? = nil, _ value: String? = nil) {
-    var event = ["type": type]
+func emit(_ type: String, _ key: String? = nil, _ value: String? = nil, metadata: [String: String] = [:]) {
+    var event = metadata
+    event["type"] = type
     if let key, let value { event[key] = value }
     guard let data = try? JSONSerialization.data(withJSONObject: event), var line = String(data: data, encoding: .utf8) else { return }
     line += "\n"
@@ -25,6 +26,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     var inputURL: URL?
     var operation: Task<Void, Never>?
     var stopping = false
+    var captureSeconds: TimeInterval = 0
 
     func prepare(language: String, inputFile: String?) async {
         do {
@@ -45,7 +47,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
                 return
             }
             guard await AVCaptureDevice.requestAccess(for: .audio) else {
-                throw VoiceError.message("Autorize o microfone para o VS Code ou Voz Engine em Definições do Sistema → Privacidade e Segurança → Microfone.")
+                throw VoiceError.message("Autorize o microfone para o aplicativo que iniciou o ditado (VozTTY ou VS Code) em Definições do Sistema → Privacidade e Segurança → Microfone.")
             }
             try Task.checkCancellation()
             guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber]) else {
@@ -69,6 +71,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     func stop() {
         guard !stopping, let inputURL else { return }
         stopping = true
+        captureSeconds = recorder?.currentTime ?? 0
         recorder?.stop()
         recorder = nil
         operation = Task {
@@ -90,12 +93,13 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
         }
         do {
             let file = try AVAudioFile(forReading: url)
+            let audioSeconds = Double(file.length) / file.processingFormat.sampleRate
             _ = try await analysis.analyzeSequence(from: file)
             try await analysis.finalizeAndFinishThroughEndOfInput()
             let text = try await output.value
             try Task.checkCancellation()
             try cleanup()
-            emit("final", "text", text)
+            emit("final", "text", text, metadata: ["audioSeconds": String(audioSeconds), "captureSeconds": String(captureSeconds)])
             exit(0)
         } catch {
             await analysis.cancelAndFinishNow()

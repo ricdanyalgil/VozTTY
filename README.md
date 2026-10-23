@@ -1,9 +1,9 @@
 <p align="center"><img src="assets/voztty-icon.png" width="96" alt="VozTTY terminal icon" /></p>
 <h1 align="center">VozTTY</h1>
-<p align="center"><strong>Speak your next prompt.</strong><br />Local voice dictation for your Mac terminal and VS Code.<br />Speak freely. Review the text. Press Enter when you are ready.</p>
+<p align="center"><strong>Speak your next prompt. Stay in your terminal.</strong><br />Local voice dictation for your Mac terminal and VS Code.<br />Speak freely. Review the text. Press Enter when you are ready.</p>
 
 <p align="center">
-  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.1"><img src="https://img.shields.io/github/v/release/ricdanyalgil/VozTTY?include_prereleases&amp;label=public%20preview&amp;style=flat" alt="Public preview release" /></a>
+  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.6"><img src="https://img.shields.io/github/v/release/ricdanyalgil/VozTTY?include_prereleases&amp;label=public%20preview&amp;style=flat" alt="Public preview release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="MIT license" /></a>
   <img src="https://img.shields.io/badge/macOS-26%2B-black?logo=apple&amp;style=flat" alt="macOS 26 or later" />
   <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-555555?style=flat" alt="Apple Silicon arm64" />
@@ -13,8 +13,12 @@
 
 <p align="center"><a href="#download-and-install">Download</a> · <a href="#two-ways-to-work">Features</a> · <a href="#compatibility-and-validation">Compatibility</a> · <a href="#build-from-source">Build</a> · <a href="#contributions-are-welcome">Contribute</a></p>
 
-<img src="assets/terminal-conversation.png" width="1100" alt="VozTTY in English: blue prompts, readable replies, local dictation controls and text you review before sending." />
-<p align="center"><sub>The real native application displaying an English synthetic conversation to demonstrate the layout. This image is not a speech-accuracy benchmark or a model-generated answer.</sub></p>
+<img src="assets/social-preview.png" width="1100" alt="VozTTY: Speak your next prompt. Stay in your terminal. Local voice dictation for macOS and VS Code." />
+
+### See the workflow
+
+<img src="assets/voice-demo.gif" width="1100" alt="Edited walkthrough of the real VozTTY app: a synthetic audio file is transcribed locally and inserted as an unsent prompt." />
+<p align="center"><sub>20-second edited walkthrough of the real app and Apple recognizer, using a synthetic audio file through a temporary demo adapter. No live microphone or assistant is connected in this clip. Frames are held for readability; this is not elapsed transcription time or an accuracy benchmark.</sub></p>
 
 ## Your voice, where you already work
 
@@ -30,7 +34,7 @@
 
 Text arrives **after you stop recording**. Word-by-word live transcription is not included.
 
-**New in native terminal source builds (0.2.4):** a subtle, single-line voice activity strip with no background or container border showing the last 20 seconds, with pauses marked on the timeline, recorded-audio duration, **Pause / Continue**, **Stop & insert**, and **Cancel**. Pause keeps your earlier audio and excludes speech until you continue. The GitHub download remains 0.2.1; build from source to try these new controls.
+**New in Terminal 0.2.6:** a transparent, borderless voice strip with a full-width, 42 px waveform showing the last 20 seconds, paused intervals, recorded duration, **Pause / Continue**, **Stop & insert**, and **Cancel**. Both downloads now include [personal vocabulary](#personal-vocabulary) for assistant and project names.
 
 ## Two ways to work
 
@@ -41,7 +45,7 @@ Text arrives **after you stop recording**. Word-by-word live transcription is no
 | Display | Black background, blue prompt accents and light output | Your VS Code terminal theme |
 | Window | Standard macOS title-bar controls | Standard VS Code controls |
 | Engine | AppKit, WebKit, xterm.js and a real macOS PTY | VS Code terminal API and a native Swift helper |
-| Current package | **0.2.1** | **0.1.2** |
+| Current package | **0.2.6** | **0.1.3** |
 
 The Mac terminal currently supports one window/session per instance. Tabs, split panes and session restoration are on the roadmap.
 
@@ -51,9 +55,9 @@ The Mac terminal currently supports one window/session per instance. Tabs, split
 
 | Package | Download | Install |
 | :--- | :--- | :--- |
-| Mac terminal | [VozTTY Terminal 0.2.1 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.1/voztty-terminal-0.2.1-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
-| VS Code extension | [VozTTY 0.1.2 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.1/voztty-0.1.2-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
-| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.1/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
+| Mac terminal | [VozTTY Terminal 0.2.6 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/voztty-terminal-0.2.6-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
+| VS Code extension | [VozTTY 0.1.3 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/voztty-0.1.3-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
+| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
 
 These are **public preview builds**, signed ad hoc and **not notarized by Apple**. macOS may require a manual security review before opening them. Building from source is also supported. The extension is distributed through GitHub Releases; it is not listed on the VS Code Marketplace yet.
 
@@ -77,7 +81,7 @@ Install the VSIX, open an integrated terminal and click its microphone icon. You
 
 The extension ID remains `danyalgil.voz-terminal`. Set **Voz: Language** (`voz.language`) to `pt-BR`, `pt-PT` or `en-US`; the default is `pt-BR`. Switching or closing the source terminal cancels an active recording.
 
-## Personal vocabulary (source builds)
+## Personal vocabulary
 
 VozTTY can normalize the spelling of assistant and project names after transcription, entirely on your Mac. Built-in entries include **Claude, Claude Code, Codex, OpenAI Codex, Gemini and VozTTY**; for example, “Cloud Code” becomes “Claude Code”. The word “cloud” on its own is preserved.
 
@@ -97,7 +101,7 @@ MyProject = My Project | Mai Project
 
 Changes apply to the next recording, with no app restart. Matches ignore case and respect word boundaries; longer phrases win, and replacements are applied once. Use at most 100 names and alternatives, each 1–80 characters, in a UTF-8 file up to 32 KB. Blank lines and lines starting with `#` are ignored. An empty file disables all corrections; delete the file to restore the defaults. Invalid files stop dictation before microphone capture and show an error.
 
-This is explicit text correction, **not acoustic model training or a guarantee of recognition accuracy**. Register specific alternatives to avoid changing words you intended to say. Project names stay in this local file and are not committed or uploaded by VozTTY. Transcripts remain editable and are never submitted automatically. Public 0.2.1/0.1.2 downloads do not include this feature yet.
+This is explicit text correction, **not acoustic model training or a guarantee of recognition accuracy**. Register specific alternatives to avoid changing words you intended to say. Project names stay in this local file and are not committed or uploaded by VozTTY. Transcripts remain editable and are never submitted automatically. Included in Terminal 0.2.6 and extension 0.1.3.
 
 ## Compatibility and validation
 
@@ -108,7 +112,7 @@ This is explicit text correction, **not acoustic model training or a guarantee o
 | Gemini through Antigravity (`agy`) | Maintainer microphone test and a 182-word draft retained without Enter |
 | Claude Code and Codex in VS Code | Long synthetic audio recognized by the real Apple engine and inserted through the extension without Enter |
 | Physical microphone, Mac terminal | Controlled 82-second recording, 182 recognized words, opening/closing and existing prefix preserved |
-| Automated checks | 12 JavaScript unit tests; native PTY/input checks; window-fit regression from 620 to 1440 px |
+| Automated checks | 16 JavaScript unit tests; native PTY/input checks; window-fit regression from 620 to 1440 px |
 
 Earlier acoustic runs lost words, and proper names can be misrecognized. The controlled long recording used speech played through speakers into the physical microphone. **It is an integration check, not a claim of perfect accuracy or a completed long test with the maintainer's natural voice.** Automated CLI tests leave prompts unsent; the maintainer separately confirmed real voice use in all three clients.
 

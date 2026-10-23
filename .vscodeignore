@@ -17,3 +17,6 @@ assets/*.json
 .impeccable/**
 .taste-skill/**
 assets/voztty-icon.svg
+
+docs/**
+assets/social-preview.png

@@ -49,3 +49,13 @@ Replaced the large voice card with a transparent, borderless 40 px line: muted m
 Added a shared local `~/Library/Application Support/VozTTY/vocabulary.txt` file, loaded before each capture by the speech helper. This normalizes final text; it does not train or bias Apple's SpeechTranscriber. Native app menu (Command-comma) and VS Code Command Palette open the same file. Defaults contain assistant/product names only; personal project entries are local and must not be committed. Empty file disables correction. Invalid files fail before microphone capture.
 
 Validation: 16 JavaScript tests, native vocabulary assertions and existing real-PTY/no-Enter checks pass. Synthetic English audio returned “Claude Code, Codex, Gemini, Blue Off.” The explicit Cloud Code alias works; Blue Auth remains an acoustic-recognition limitation unless its observed alternatives are registered. No new natural-voice/microphone or GUI verification. Native and VSIX builds pass. Public releases and Marketplace unchanged.
+
+## Public preview 0.2.6 — discovery and waveform follow-up
+
+The maintainer authorized implementing the repository-discovery plan and then requested larger waves. Native 0.2.6 gives the waveform its own full-width 42 px row, keeping transparent/borderless styling and compact actions. Layout tests passed 620–1440 px with zero overflow. Installed app is updated without closing working sessions.
+
+Repository description and 12 relevant topics updated. Generated cover (`assets/social-preview.png`, 1280 × 640, <1 MB) and a 20-second edited GIF are in the English README. The GIF uses actual app captures and synthetic file input through the real Apple recognizer via an adapter confined to an owned temporary demo app; it does not open a microphone or connect an assistant. The shipping app/helper were not replaced by that adapter. A fresh speaker-to-microphone attempt failed to capture the intended playback; none of those frames/transcripts are public assets. Native public package is 0.2.6; extension 0.1.3. Release checksum verification is required before reporting publication.
+
+Baseline traffic captured locally in work/github-growth-baseline.json: 0 views, 0 clones and no referrers; repo had 0 stars and 0 forks. No ongoing monitoring was scheduled. Community copy is prepared as drafts in docs/LAUNCH_KIT.md; no additional X/community posts made.
+
+Social preview upload: Chrome is authenticated and the repository Settings page is open, but native browser controls repeatedly fail with noWindowsAvailable/offscreen errors. Generated cover is ready; do not claim the GitHub social preview has been applied without verification. The in-app browser is signed out.

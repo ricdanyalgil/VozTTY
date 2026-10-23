@@ -4,15 +4,15 @@ html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
 body { padding: 18px 24px; box-sizing: border-box; display: flex; flex-direction: column; }
 #terminal { width: 100%; flex: 1; min-height: 0; }
 #voice-panel[hidden] { display: none; }
-#voice-panel { flex: none; margin-bottom: 12px; padding: 0; border: 0; background: transparent; color: #98a7b5; font: 11px SFMono-Regular, Menlo, monospace; display: grid; grid-template-columns: auto minmax(80px, 1fr) auto; align-items: center; gap: 12px; }
+#voice-panel { flex: none; margin-bottom: 12px; padding: 0; border: 0; background: transparent; color: #98a7b5; font: 11px SFMono-Regular, Menlo, monospace; display: grid; grid-template-columns: auto minmax(80px, 1fr) auto; align-items: center; gap: 0 12px; }
 .voice-info, .voice-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .voice-info { grid-column: 1; grid-row: 1; }
 #voice-status { display: block; max-width: 175px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; font-weight: 400; }
 #voice-hint, .voice-scale { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 #voice-time { font-variant-numeric: tabular-nums; color: #718393; }
-.voice-history { grid-column: 2; grid-row: 1; min-width: 0; }
-#voice-wave { display: block; width: 100%; height: 28px; overflow: hidden; }
-#voice-envelope { fill: #a9d2ff; fill-opacity: .08; stroke: #8caac5; stroke-width: .8; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.voice-history { grid-column: 1 / -1; grid-row: 2; min-width: 0; }
+#voice-wave { display: block; width: 100%; height: 42px; overflow: hidden; }
+#voice-envelope { fill: #a9d2ff; fill-opacity: .08; stroke: #8caac5; stroke-width: 1; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
 .wave-baseline { stroke: #202b34; stroke-width: 1; }
 .wave-now { stroke: #83936e; stroke-width: 1; }
 #voice-pauses rect { fill: #929eaa; fill-opacity: .06; }
@@ -25,7 +25,7 @@ body { padding: 18px 24px; box-sizing: border-box; display: flex; flex-direction
 .voice-actions button:disabled { opacity: .4; cursor: default; }
 .voice-actions button:focus-visible { outline: 1px solid #a9d2ff; outline-offset: -3px; }
 @media (max-width: 700px) {
-  #voice-panel { gap: 8px; }
+  #voice-panel { column-gap: 8px; }
   #voice-status { max-width: 130px; }
   .voice-actions { gap: 2px; }
   .voice-actions button { padding: 0 4px; }

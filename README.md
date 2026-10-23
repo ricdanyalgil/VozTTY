@@ -13,7 +13,7 @@
 
 <p align="center"><a href="#download-and-install">Download</a> · <a href="#two-ways-to-work">Features</a> · <a href="#compatibility-and-validation">Compatibility</a> · <a href="#build-from-source">Build</a> · <a href="#contributions-are-welcome">Contribute</a></p>
 
-<img src="assets/terminal-conversation.png" width="1100" alt="VozTTY on Mac, with blue question prompts, light replies, microphone controls and keyboard shortcuts." />
+<img src="assets/terminal-conversation.png" width="1100" alt="VozTTY in English: blue prompts, readable replies, local dictation controls and text you review before sending." />
 <p align="center"><sub>The real native application displaying an English synthetic conversation to demonstrate the layout. This image is not a speech-accuracy benchmark or a model-generated answer.</sub></p>
 
 ## Your voice, where you already work

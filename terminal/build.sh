@@ -9,6 +9,7 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 xcrun swiftc -parse-as-library -swift-version 6 -O -target arm64-apple-macos26.0 Main.swift App.swift PTY.swift Dictation.swift -o "$app/Contents/MacOS/VozTTY" -framework AppKit -framework WebKit
 cp -R web "$app/Contents/Resources/web"
 cp VozTTY.icns "$app/Contents/Resources/VozTTY.icns"
+cp ../LICENSE "$app/Contents/Resources/LICENSE"
 ditto --norsrc --noextattr ../native/VozEngine.app "$app/Contents/Resources/VozEngine.app"
 cat > "$app/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>

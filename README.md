@@ -1,158 +1,161 @@
-<p align="center"><img src="assets/voztty-icon.svg" width="100" alt="VozTTY terminal mark" /></p>
+<p align="center"><img src="assets/voztty-icon.png" width="96" alt="VozTTY terminal icon" /></p>
 <h1 align="center">VozTTY</h1>
-<p align="center"><strong>Your voice belongs in the terminal.</strong></p>
-<p align="center">A native Mac terminal. A VS Code extension.<br />Speak the full thought, review the text, send it yourself.</p>
-<p align="center"><a href="#try-it">Try it</a> · <a href="#the-experience">The experience</a> · <a href="#tested-not-assumed">Validation</a> · <a href="#under-the-hood">Architecture</a> · <a href="README.pt-BR.md">Português</a></p>
+<p align="center"><strong>Speak your next prompt.</strong><br />Local voice dictation for your Mac terminal and VS Code.<br />Speak freely. Review the text. Press Enter when you are ready.</p>
 
-> **Private preview.** Built toward an MIT open-source release. The repository remains private and releases remain drafts until the maintainer approves publication. No Marketplace listing or public binary yet.
+<p align="center">
+  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.0"><img src="https://img.shields.io/github/v/release/ricdanyalgil/VozTTY?include_prereleases&amp;label=public%20preview&amp;style=flat" alt="Public preview release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="MIT license" /></a>
+  <img src="https://img.shields.io/badge/macOS-26%2B-black?logo=apple&amp;style=flat" alt="macOS 26 or later" />
+  <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-555555?style=flat" alt="Apple Silicon arm64" />
+  <img src="https://img.shields.io/badge/VS%20Code-1.93%2B-007ACC?style=flat" alt="VS Code 1.93 or later" />
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-78A641?style=flat" alt="Pull requests welcome" /></a>
+</p>
 
-<img src="assets/terminal-conversation.png" width="1100" alt="VozTTY native terminal: blue question prompts, light gray replies, grouped voice controls and a separate keyboard-shortcut footer." />
+<p align="center"><a href="#download-and-install">Download</a> · <a href="#two-ways-to-work">Features</a> · <a href="#compatibility-and-validation">Compatibility</a> · <a href="#build-from-source">Build</a> · <a href="#contributions-are-welcome">Contribute</a></p>
 
-<p align="center"><sub>Real native app showing synthetic conversation fixtures to demonstrate the layout and prompt colors. No model response or voice accuracy is being claimed by this image.</sub></p>
+<img src="assets/terminal-conversation.png" width="1100" alt="VozTTY on Mac, with blue question prompts, light replies, microphone controls and keyboard shortcuts." />
+<p align="center"><sub>The real native application displaying an English synthetic conversation to demonstrate the layout. This image is not a speech-accuracy benchmark or a model-generated answer.</sub></p>
 
-## Keep the thought. Lose the typing.
+## Your voice, where you already work
 
-Some ideas need more than a short command. You want to explain the context, add the details, pause and find the right words — without leaving the terminal to transcribe somewhere else.
+Explaining a task can be easier than typing it. VozTTY brings a microphone directly to your terminal so you can explain the context, add details and keep your train of thought.
 
-**VozTTY brings the microphone to the prompt.** Recognition runs locally through Apple's speech frameworks. Stop recording and your text lands where you are working, with the existing prompt preserved. No clipboard. No automatic Enter.
+**Click the microphone → speak → stop → review → send it yourself.**
 
-### Two ways to work
+- **Local speech recognition** through Apple's SpeechAnalyzer. No VozTTY cloud account or transcription API key.
+- **Direct insertion** into your prompt, preserving existing text. No clipboard round trip.
+- **No automatic Enter.** Dictation stays editable until you choose to send it.
+- **Three recognition languages:** Brazilian Portuguese, European Portuguese and US English, subject to Apple's model availability.
+- **Keyboard control:** <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>V</kbd> starts/stops dictation; <kbd>Esc</kbd> cancels while the terminal has focus.
 
-| | **VozTTY Terminal** | **VS Code extension** |
+Text arrives **after you stop recording**. Word-by-word live transcription is not included.
+
+## Two ways to work
+
+| | VozTTY Terminal | VS Code extension |
 | :--- | :--- | :--- |
-| Workspace | A standalone macOS application | Your existing VS Code terminals |
-| Voice control | **Dictate / Stop & insert** in the window | Microphone / Stop in the terminal toolbar |
-| Terminal engine | Real PTY and login shell, rendered with xterm.js | VS Code's integrated terminal |
-| Runtime | AppKit + WebKit; no Node.js runtime | JavaScript extension + native Swift helper |
-| Preview | **0.2.0**, initial native terminal | **0.1.1**, installed and manually exercised |
+| Where | A standalone native Mac application | Your existing integrated terminals |
+| Voice controls | **Dictate / Stop & insert** in the header | Microphone and Stop icons in the terminal toolbar |
+| Display | Black background, blue prompt accents and light output | Your VS Code terminal theme |
+| Window | Minimize, maximize/restore and close controls | Standard VS Code controls |
+| Engine | AppKit, WebKit, xterm.js and a real macOS PTY | VS Code terminal API and a native Swift helper |
+| Current package | **0.2.0** | **0.1.2** |
 
-The native app is a first working terminal, not a full terminal suite: one window and one session, with resize, terminal colors, keyboard input and voice dictation. Tabs, split panes and session restoration are not included.
+The Mac terminal currently supports one window/session per instance. Tabs, split panes and session restoration are on the roadmap.
 
-## The experience
+## Download and install
 
-**Select your prompt → Dictate → Speak → Stop → Review.**
+**Requires an Apple Silicon Mac running macOS 26 or later.** VS Code integration additionally requires VS Code desktop 1.93+. Apple's speech models may require an initial download.
 
-- Speak a whole explanation. Text is inserted **after Stop**, not word by word.
-- Use <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>V</kbd> to start or stop while the terminal has focus.
-- Press <kbd>Esc</kbd> to cancel while the terminal has focus.
-- Keep typing after the transcript arrives. You choose when to press Enter.
-- Pick `pt-BR`, `pt-PT` or `en-US`, subject to Apple's language support.
+| Package | Download | Install |
+| :--- | :--- | :--- |
+| Mac terminal | [VozTTY Terminal 0.2.0 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.0/voztty-terminal-0.2.0-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
+| VS Code extension | [VozTTY 0.1.2 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.0/voztty-0.1.2-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
+| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.0/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
 
-In VS Code, changing or closing the source terminal cancels the recording. In the native app, closing a running terminal asks for confirmation; unsent text and running programs are not restored afterwards.
+These are **public preview builds**, signed ad hoc and **not notarized by Apple**. macOS may require a manual security review before opening them. Building from source is also supported. The extension is distributed through GitHub Releases; it is not listed on the VS Code Marketplace yet.
 
-## Try it
+### In the Mac terminal
 
-**Apple Silicon · macOS 26+ · microphone permission.** For the extension, use VS Code desktop 1.93+. Apple's language models may need an initial download. These previews are ad hoc signed and are not notarized by Apple.
+Open **VozTTY**, then run your installed assistant as usual:
 
-Clone access currently requires permission to the private repository.
+```sh
+codex
+# or
+claude
+# or
+agy
+```
 
-### Native Mac terminal
+Click **Dictate**, wait for **Recording**, speak, then choose **Stop & insert**. Read and edit the transcript before pressing Enter. The CLIs must be installed and authenticated separately; VozTTY does not bundle them or manage their accounts.
 
-Requires Apple's development tools with the macOS 26 SDK or later. The renderer is already vendored; no npm installation is needed for the app.
+### In VS Code
+
+Install the VSIX, open an integrated terminal and click its microphone icon. You can also run **VozTTY: Start Terminal Dictation** from the Command Palette. If the icon is missing, use **Developer: Reload Window** when it is safe to interrupt your window.
+
+The extension ID remains `danyalgil.voz-terminal`. Set **Voz: Language** (`voz.language`) to `pt-BR`, `pt-PT` or `en-US`; the default is `pt-BR`. Switching or closing the source terminal cancels an active recording.
+
+## Compatibility and validation
+
+| Client / check | Verified behavior |
+| :--- | :--- |
+| Codex in VozTTY Terminal | Maintainer microphone test and long draft insertion |
+| Claude Code in VozTTY Terminal | Maintainer microphone test and long draft/paste block insertion |
+| Gemini through Antigravity (`agy`) | Maintainer microphone test and a 182-word draft retained without Enter |
+| Claude Code and Codex in VS Code | Long synthetic audio recognized by the real Apple engine and inserted through the extension without Enter |
+| Physical microphone, Mac terminal | Controlled 82-second recording, 182 recognized words, opening/closing and existing prefix preserved |
+| Automated checks | 12 JavaScript unit tests; native PTY/input checks; window-fit regression from 620 to 1440 px |
+
+Earlier acoustic runs lost words, and proper names can be misrecognized. The controlled long recording used speech played through speakers into the physical microphone. **It is an integration check, not a claim of perfect accuracy or a completed long test with the maintainer's natural voice.** Automated CLI tests leave prompts unsent; the maintainer separately confirmed real voice use in all three clients.
+
+Google [moved personal-account terminal access to Antigravity CLI](https://github.com/google-gemini/gemini-cli/discussions/27274). Use `agy` for that workflow. Legacy Gemini CLI remains available with eligible enterprise or paid API access.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Start dictation] --> B[Native Swift helper]
+    B --> C[Microphone capture]
+    C --> D[Apple SpeechAnalyzer]
+    D --> E[Terminal-safe text]
+    E --> F[VS Code terminal]
+    E --> G[VozTTY PTY]
+    F --> H[Review and press Enter yourself]
+    G --> H
+```
+
+The native app uses AppKit, WKWebView, xterm.js 6.0.0 and a macOS pseudo-terminal. Its renderer is bundled locally with no CDN or Node.js runtime. The extension has no npm production dependencies. Both share the same Swift speech helper. Upstream [renderer licenses](terminal/web/vendor/README.md) are included.
+
+### Privacy and current limits
+
+- Voice recognition runs on the Mac. VozTTY has no cloud transcription backend, assistant credentials or persistent transcript history.
+- Recordings use a private temporary folder and are removed on normal completion/cancellation. A forced shutdown can leave temporary audio behind.
+- Terminal control characters are removed and line breaks become spaces. A program that reacts immediately to characters can still react without Enter; dictate into the intended text input.
+- Transcription has a 60-second timeout **after Stop** and a 64 KiB text limit. Recording itself is not limited to 60 seconds.
+- Native prompt colors recognize `›`, `❯` and `>` markers and automatic wraps. Output using the same markers may also be highlighted; explicit multiline continuations may retain their CLI colors.
+- Closing the app ends running programs and loses unsent prompts or unsaved recovery text. An active session asks for confirmation.
+- Intel Macs, Windows, Linux and browser-based VS Code are unsupported. Remote terminals and fresh-install permission failures need more validation.
+
+## Build from source
+
+Use an Apple Silicon Mac, Apple's development tools with the macOS 26 SDK or later, and Node.js 22+ for extension packaging/tests.
 
 ```sh
 git clone https://github.com/ricdanyalgil/VozTTY.git
 cd VozTTY
+npm test
+
+# Native terminal
 ./terminal/build.sh
 open terminal/VozTTY.app
-```
 
-The build reuses the same Swift recognition helper as the extension. The shell is `/bin/zsh -l`; your normal shell configuration applies. Run your installed `claude`, `codex`, `agy` or `gemini` command as you would in another terminal. VozTTY does not bundle those CLIs or sign in for you.
-
-For launching an executable directly from another shell:
-
-```sh
-terminal/VozTTY.app/Contents/MacOS/VozTTY -- /absolute/path/to/your/cli
-```
-
-### VS Code
-
-With Node.js 22+ and Apple's development tools:
-
-```sh
+# VS Code extension
 ./build-helper.sh
-npm test
-npx @vscode/vsce package --no-dependencies --target darwin-arm64 \
-  --out voztty-0.1.1-darwin-arm64.vsix
+npx @vscode/vsce@4.0.0 package --no-dependencies --target darwin-arm64 \
+  --out voztty-0.1.2-darwin-arm64.vsix
 ```
 
-In VS Code, choose **Extensions → … → Install from VSIX…**. Open a terminal and look for the microphone. If it is missing, use **Developer: Reload Window** when you can safely interrupt the window.
+No npm install is required for production dependencies. Native checks, test-only integration hooks and icon generation are described in [`terminal/README.md`](terminal/README.md).
 
-The extension ID is `danyalgil.voz-terminal`. Select a language in **Settings → Voz: Language**. Extension commands currently use Portuguese: **Voz: Começar ditado no terminal** starts a recording.
+## Contributions are welcome
 
-The native terminal uses a black conversation surface: recognized question prompts are blue, ordinary replies remain light gray, and voice controls and shortcuts have separate areas. Accents follow the prompt markers used by the tested CLIs; see [layout limits](terminal/README.md#conversation-layout).
+**We would love to build VozTTY with you. It would be a pleasure to welcome your contribution.**
 
-## Tested, not assumed
+Bug reports, documentation improvements, accessibility feedback, recognition-language testing and pull requests are all welcome. First contribution? A small documentation fix or a reproducible bug report is a great place to start.
 
-Tests check **draft insertion**, not whether an assistant generated a response. The test prompts are deliberately left unsent.
+- Read the [contribution guide](CONTRIBUTING.md).
+- [Report a bug or propose an idea](https://github.com/ricdanyalgil/VozTTY/issues).
+- [Open a pull request](https://github.com/ricdanyalgil/VozTTY/pulls).
+- Please use synthetic examples instead of private recordings or sensitive transcripts.
 
-| Check | Observed result |
-| :--- | :--- |
-| Core extension behavior | 10 unit tests passing: sanitization, targeting, cancellation and failures |
-| Native shell / PTY | Real input, resize and a check that execution needs Enter |
-| Maintainer voice in the native terminal | Short microphone tests confirmed in Codex, Claude Code and Antigravity; proper names may need correction |
-| Short voice capture in VS Code | Acoustic test passed; maintainer also confirmed their own voice in a normal shell |
-| Long voice capture in VozTTY Terminal | Controlled physical-microphone test: **82 seconds, 182 recognized words**, opening and closing preserved, existing prefix retained, no Enter |
-| Codex CLI in VozTTY Terminal | Long draft visible in the actual composer, left unsent |
-| Claude Code in VozTTY Terminal | Long draft retained as a **Pasted text** block, left unsent |
-| Antigravity CLI (Google successor) in VozTTY Terminal | 182-word draft retained as a paste block, exact PTY input, no Enter |
-| Legacy Gemini CLI | Personal-account access retired by Google; use `agy` or an eligible enterprise/API method |
-| Claude Code + Codex CLI through the VS Code extension | 182-word drafts retained, no Enter; synthetic long audio with the real Apple recognizer |
+### Roadmap
 
-The long acoustic test used speech played through the Mac's speakers and recorded through its physical microphone. Earlier acoustic attempts lost words; the controlled repeat preserved the opening and closing. Recognition can still substitute words and punctuation. **This is an integration check, not an accuracy benchmark or a completed long-form test with the maintainer's own voice.**
+- Longer tests with natural speech and more microphones/languages.
+- Fresh-install permissions, interruption recovery and remote-terminal validation.
+- Native terminal stability, accessibility and notarized distribution.
+- Tabs and split panes after the single-session experience is solid.
+- VS Code Marketplace distribution.
 
-See [VALIDACAO.md](VALIDACAO.md) for test scope, versions, remaining checks and the prior `SIGPIPE` fix.
+## License
 
-For personal Google accounts, Google [moved terminal access to Antigravity CLI](https://github.com/google-gemini/gemini-cli/discussions/27274). Install the [official client](https://antigravity.google/docs/getting-started/) and run `agy` inside VozTTY or the VS Code terminal. Gemini CLI remains supported for eligible enterprise and paid API access. VozTTY does not change authentication, accept service terms or require an API key for dictation.
-
-## Under the hood
-
-```mermaid
-flowchart LR
-    A[Click microphone] --> B[Local Swift speech helper]
-    B --> C[Microphone capture]
-    C --> D[Apple SpeechAnalyzer]
-    D --> E[Normalize terminal-safe text]
-    E --> F[Selected VS Code terminal]
-    E --> G[VozTTY PTY session]
-    F --> H[Review before Enter]
-    G --> H
-```
-
-The native terminal uses **AppKit**, **WKWebView**, **xterm.js 6.0.0** and a real macOS pseudo-terminal. Its JavaScript and styles are bundled locally; the terminal view has no network access. Shell programs and assistant CLIs keep their own networking behavior.
-
-The extension has **no npm production dependencies**. Both clients share the Apple recognition helper. xterm.js and the fit addon retain their [upstream MIT licenses](terminal/web/vendor/README.md).
-
-### Privacy and limits
-
-- Voice recognition uses Apple's local frameworks. No VozTTY cloud transcription API, assistant credentials or persistent transcript history.
-- Audio is held in a private temporary directory and removed after normal completion or cancellation. A forced shutdown can leave temporary audio behind.
-- Terminal controls are removed from dictated text; line breaks become spaces. Existing text is not cleared.
-- Recognition has a 60-second timeout **after Stop** and a 64 KiB transcript limit. This is not a 60-second recording limit.
-- A program that reacts immediately to characters can react without Enter. Dictate only into the intended text input. A CLI's own draft/history policies remain its responsibility.
-- Failed delivery preserves a transcript in a recovery document/window where possible. Closing the app discards unsaved recovery text.
-- Intel Macs, Windows, Linux and browser-based VS Code are unsupported. Remote terminals and fresh-install permission failures still need validation.
-
-## Development
-
-| Area | Source |
-| :--- | :--- |
-| VS Code integration | [`extension.js`](extension.js) · [`dictation.js`](dictation.js) |
-| Shared speech engine | [`native/VoiceEngine.swift`](native/VoiceEngine.swift) |
-| Native terminal | [`terminal/`](terminal/) |
-| Unit / integration checks | [`test/`](test/) |
-| Evidence and outstanding work | [`VALIDACAO.md`](VALIDACAO.md) |
-
-Run `npm test` for the extension checks. Native tests and hardware-test setup are documented in [`terminal/README.md`](terminal/README.md). Hardware tests open the microphone only when explicitly invoked.
-
-## Road ahead
-
-- [ ] Complete the Gemini CLI authentication/input check.
-- [ ] Confirm longer dictation with the maintainer's own voice.
-- [ ] Exercise fresh permissions, interruptions and remote terminals.
-- [ ] Harden the native terminal and prepare a notarized distribution.
-- [ ] Open the repository and release **only after maintainer approval**.
-
----
-
-<p align="center"><strong>Speak freely. Send deliberately.</strong><br /><a href="CONTRIBUTING.md">Contribute</a> · <a href="LICENSE">MIT</a> · <a href="https://github.com/ricdanyalgil/VozTTY/issues">Report an issue</a></p>
+VozTTY is open source under the [MIT license](LICENSE). Copyright © 2026 Ricardo Danyalgil Junior. Bundled third-party components retain their own licenses.

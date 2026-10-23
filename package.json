@@ -1,8 +1,8 @@
 {
   "name": "voz-terminal",
-  "displayName": "VozTTY — Ditado no Terminal",
-  "description": "Microfone no terminal do VS Code. Ditado local no Mac, sem clipboard e sem envio automático.",
-  "version": "0.1.1",
+  "displayName": "VozTTY — Voice Dictation",
+  "description": "Local voice dictation inside VS Code terminals on Mac. No clipboard and no automatic Enter.",
+  "version": "0.1.2",
   "publisher": "danyalgil",
   "license": "MIT",
   "engines": {
@@ -25,19 +25,19 @@
     "commands": [
       {
         "command": "voz.toggle",
-        "title": "Voz: Começar ditado no terminal",
+        "title": "VozTTY: Start Terminal Dictation",
         "icon": "$(mic)",
         "enablement": "!voz.active"
       },
       {
         "command": "voz.stop",
-        "title": "Voz: Parar e inserir no prompt",
+        "title": "VozTTY: Stop and Insert Dictation",
         "icon": "$(debug-stop)",
         "enablement": "voz.recording"
       },
       {
         "command": "voz.cancel",
-        "title": "Voz: Cancelar ditado",
+        "title": "VozTTY: Cancel Dictation",
         "icon": "$(close)",
         "enablement": "voz.active"
       }
@@ -93,7 +93,7 @@
       }
     ],
     "configuration": {
-      "title": "Voz",
+      "title": "VozTTY",
       "properties": {
         "voz.language": {
           "type": "string",
@@ -104,7 +104,7 @@
           ],
           "default": "pt-BR",
           "scope": "application",
-          "description": "Idioma do reconhecimento local da Apple."
+          "description": "Language for local Apple speech recognition."
         }
       }
     }
@@ -116,5 +116,6 @@
   "homepage": "https://github.com/ricdanyalgil/VozTTY#readme",
   "bugs": {
     "url": "https://github.com/ricdanyalgil/VozTTY/issues"
-  }
+  },
+  "icon": "assets/voztty-icon.png"
 }

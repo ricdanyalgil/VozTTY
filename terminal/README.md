@@ -1,4 +1,4 @@
-# VozTTY Terminal — private native preview
+# VozTTY Terminal — open-source native preview
 
 A single-session Mac terminal with a microphone in its own window. Uses AppKit, a bundled xterm.js renderer in WKWebView, a real PTY and the shared local speech helper. Apple Silicon and macOS 26+ only.
 

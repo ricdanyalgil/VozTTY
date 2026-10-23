@@ -1,8 +1,8 @@
 # VozTTY — A sua voz no terminal
 
-**Fale o próximo prompt sem sair do terminal.** Projeto privado a caminho de uma versão open source com licença MIT. [English](README.md) · [Releases](https://github.com/ricdanyalgil/VozTTY/releases)
+**Fale o próximo prompt sem sair do terminal.** Projeto open source com licença MIT. [English](README.md) · [Releases](https://github.com/ricdanyalgil/VozTTY/releases)
 
-**Estado de publicação:** desenvolvimento privado e primeira release em rascunho. O repositório e a versão só devem tornar-se públicos depois de validar a primeira versão e de o responsável aprovar a publicação. A licença MIT já está preparada para essa abertura futura.
+**Estado de publicação:** prévia pública autorizada pelo responsável. O terminal Mac e a extensão VS Code estão disponíveis nos [downloads da release v0.2.0](https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.0). Os pacotes ainda não têm notarização da Apple.
 
 Microfone na barra do terminal, com reconhecimento local no Mac e inserção direta no prompt. Não lê nem escreve no clipboard e não acrescenta Enter.
 
@@ -49,7 +49,7 @@ Requer VS Code desktop, Apple Silicon e macOS 26 ou superior. A extensão é exe
 
 ## Instalar o pacote
 
-No VS Code, abra **Extensions → … → Install from VSIX…** e selecione o ficheiro `voztty-0.1.1-darwin-arm64.vsix` fornecido pelo responsável ou compilado a partir do repositório privado. Se o painel Terminal não mostrar o microfone depois da instalação, execute **Developer: Reload Window** quando puder interromper a janela atual.
+No VS Code, abra **Extensions → … → Install from VSIX…** e selecione o ficheiro `voztty-0.1.2-darwin-arm64.vsix` disponível na release pública ou compilado a partir do repositório. Se o painel Terminal não mostrar o microfone depois da instalação, execute **Developer: Reload Window** quando puder interromper a janela atual.
 
 ## Desenvolvimento
 

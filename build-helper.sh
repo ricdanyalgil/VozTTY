@@ -18,8 +18,8 @@ cat > "$app/Contents/Info.plist" <<'PLIST'
 <key>CFBundleVersion</key><string>1</string>
 <key>LSMinimumSystemVersion</key><string>26.0</string>
 <key>LSUIElement</key><true/>
-<key>NSMicrophoneUsageDescription</key><string>O VozTTY transcreve o seu ditado para o terminal em que iniciou a gravação quando clica no microfone.</string>
-<key>NSSpeechRecognitionUsageDescription</key><string>O VozTTY reconhece a fala localmente no Mac para inserir texto no terminal escolhido.</string>
+<key>NSMicrophoneUsageDescription</key><string>VozTTY records speech when you click the microphone and inserts it into the terminal where dictation started.</string>
+<key>NSSpeechRecognitionUsageDescription</key><string>VozTTY recognizes speech locally on this Mac to insert text into your selected terminal.</string>
 </dict></plist>
 PLIST
 xattr -cr "$app"

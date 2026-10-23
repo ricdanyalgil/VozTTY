@@ -1,44 +1,27 @@
-# Continuar o VozTTY
+# VozTTY checkpoint — 2026-10-23
 
-## Estado atual — 23/10/2026
+## Publication authorization
 
-- Repositório GitHub privado; release v0.1.0 em rascunho. Não publicar sem aprovação explícita.
-- Extensão VS Code 0.1.1 instalada e confirmada pelo responsável.
-- Terminal próprio nativo 0.2.0 instalado em /Applications/VozTTY.app, com fundo preto inspirado no Codex, um terminal/sessão, microfone, cancelamento e revisão antes de Enter.
-- README em inglês com imagens, instalação, arquitetura e resultados; VALIDACAO.md mantém o histórico e os limites dos testes.
-- Codex, Claude Code e Antigravity (agy, sucessor oficial do Gemini CLI para contas pessoais) têm teste manual curto de microfone confirmado pelo responsável.
-- Claude Code 2.1.309 aberto na pasta VozTTY; ditado recebido e respondido. Reconheceu Claude como Cloud. Não alterar automaticamente nomes no motor.
-- O responsável escolheu Full Access no Codex. A sessão observada estava em /; indicar pasta de projeto ao iniciar trabalho. Não alterar permissões escolhidas sem motivo relacionado com a tarefa.
+The maintainer explicitly authorized making the repository public and publishing both the VS Code extension and the native terminal on GitHub. Earlier instructions to keep development private have been superseded. Public release target: v0.2.0, with Terminal 0.2.0 and extension 0.1.2. Verify live GitHub state before reporting publication complete.
 
-## Evidência
+## Current products
 
-- 10 testes da extensão e verificações nativas de sanitização, PTY, resize e Enter explícito passaram.
-- Ensaio acústico controlado: 82 segundos, 182 palavras, início/fim e prefixo preservados, sem Enter. Ensaios anteriores perderam palavras. Não é benchmark de precisão nem fala longa natural do responsável.
-- Claude/Codex: rascunhos longos no VS Code e no terminal próprio. Antigravity 1.4.6 / Gemini 4 Argon: 182 palavras, bytes iguais ao texto e bloco de colagem no terminal próprio, sem Enter.
-- Compilação, assinatura local e sintaxe JavaScript verificadas no tema preto. Captura atual em outputs/voztty-black.png, fora do repositório; inclui dados de conta, não publicar.
-- Login e termos do Antigravity concluídos pelo responsável. Gemini CLI legado permanece incompatível com o acesso pessoal; usar agy. Não criar alias enganador nem extrair credenciais.
+- Native Mac terminal: black layout, blue prompt accents, persistent window controls, corrected grid sizing and app icon. Installed in /Applications/VozTTY.app.
+- Extension: English UI/messages in 0.1.2, stable command IDs and original no-Enter/no-clipboard behavior. Do not interrupt existing VS Code windows to update them.
+- Main README, contribution guide and release notes are in English. Optional Portuguese documentation remains available.
+- Both clients use the local Apple SpeechAnalyzer helper. Apple Silicon/macOS 26+ only; ad hoc signed, not notarized.
 
-## Próximos passos
+## Verified scope
 
-1. Testar fala longa natural do responsável: início, fim, edição e envio apenas manual.
-2. Se necessário, repetir o teste do Antigravity pela extensão VS Code; ainda não foi validado nesse ambiente.
-3. Continuar estabilização e uso prolongado antes de considerar lançamento público. Faltam notarização, testes de permissões numa instalação nova e sessões remotas.
-4. Revisão visual completa ainda não foi aprovada. Não iniciar redesign adicional sem pedido.
+Twelve JavaScript unit tests, native PTY/input checks, long draft insertion in assistant CLIs and window-fit checks. Maintainer confirmed short natural voice in Codex, Claude Code and Antigravity. Long controlled acoustic check: 82 seconds/182 words, not a perfect-accuracy claim or a completed long natural-voice test. Development details are in VALIDACAO.md.
 
-Não guardar/publicar gravações pessoais, credenciais ou dados de conta. Diagnósticos locais ficam em work/. Testes de integração entram apenas com -D VOZ_TEST; a aplicação instalada é a versão normal.
+## Remaining work
 
-## Layout atualizado
+- Longer natural speech, fresh-install permissions, interruptions and remote terminals.
+- Notarization and sustained native terminal use.
+- Antigravity through the VS Code extension, beyond the completed native-terminal test.
+- Do not log/upload recordings, credentials or personal prompts. Diagnostics in work/ are not release content.
 
-Novo layout do terminal próprio: perguntas azuis com fundo azul discreto, respostas com as cores normais do CLI, cabeçalho em duas linhas e rodapé com legenda/atalhos. Prévia sintética identificada em assets/terminal-conversation.png, sem dados de conta. Codex real validado com 182 palavras, nenhuma submissão, destaque e seleção preservados. `npm test` agora inclui os dois testes do classificador visual (12 no total). Ler os limites em terminal/README.md: prefixos visuais podem coincidir com citações e não existe metadata universal de papéis nos CLIs. Não recolorir ou modificar o fluxo PTY. As janelas já abertas conservam a versão carregada; a nova UI aplica-se a novas instâncias.
+## Before another release
 
-## Ícone macOS corrigido
-
-O ICNS anterior tinha o fundo verde sem o símbolo. SVG corrigido para formas preenchidas; terminal/build-icon.sh regenera tamanhos standard/Retina e verifica o símbolo. Recompilar e reinstalar mantém as janelas abertas; o Dock pode precisar que a aplicação seja reaberta para largar o ícone em cache. Não terminar sessões do responsável para forçar a atualização.
-
-## Corte lateral corrigido
-
-O FitAddon calculava a largura do pai com padding como se estivesse toda disponível para texto. Margens movidas para body, deixando o elemento medido sem padding; preservada a aparência. Teste nativo VOZ_TEST_MODE=layout reproduz o erro anterior e verifica limites/dimensionamento após redimensionar. A correção é carregada por novas instâncias, sem terminar sessões abertas.
-
-## Botões permanentes da janela
-
-Adicionados minimizar, maximizar/restaurar e fechar no cabeçalho, além da barra nativa não transparente. Fechar usa performClose e respeita a confirmação de sessão ativa. Teste CUA verificou presença, zoom/restauro e cancelar fecho; minização acionada, persistência no Dock não confirmada. Atualização aplica-se a novas instâncias, sem terminar as sessões atuais.
+Build both packages, inspect their contents, run relevant checks, prepare checksums and verify the public release assets. Keep third-party licenses. Reviewers should distinguish synthetic layout screenshots from actual assistant/recognition results. Do not publish to the VS Code Marketplace without a separate request.

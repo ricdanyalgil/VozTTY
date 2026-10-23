@@ -18,12 +18,12 @@ class Dictation {
   start() {
     if (this.session) return;
     const terminal = this.vscode.window.activeTerminal;
-    if (!terminal) return void this.vscode.window.showInformationMessage('Abra e selecione um terminal antes de iniciar o ditado.');
+    if (!terminal) return void this.vscode.window.showInformationMessage('Open and select a terminal before starting dictation.');
     if (process.platform !== 'darwin' || process.arch !== 'arm64') {
-      return void this.vscode.window.showErrorMessage('Voz requer um Mac com Apple Silicon e macOS 26 ou superior.');
+      return void this.vscode.window.showErrorMessage('VozTTY requires an Apple Silicon Mac running macOS 26 or later.');
     }
     const language = this.vscode.workspace.getConfiguration('voz').get('language', 'pt-BR');
-    if (!['pt-BR', 'pt-PT', 'en-US'].includes(language)) return void this.vscode.window.showErrorMessage('Idioma de ditado inválido.');
+    if (!['pt-BR', 'pt-PT', 'en-US'].includes(language)) return void this.vscode.window.showErrorMessage('Invalid dictation language.');
     const session = { terminal, state: 'preparing', buffer: '', child: undefined, timer: undefined };
     this.session = session;
     this.changed(session.state, terminal);
@@ -34,13 +34,13 @@ class Dictation {
       child.stdout.on('data', data => this.read(session, data));
       // The native framework may log diagnostics to stderr; never log audio or transcripts.
       child.stderr.resume();
-      child.on('error', error => this.fail(session, `Não foi possível iniciar o microfone: ${error.message}`));
-      child.stdin.on('error', () => this.fail(session, 'A ligação ao microfone foi interrompida.'));
+      child.on('error', error => this.fail(session, `Could not start the microphone: ${error.message}`));
+      child.stdin.on('error', () => this.fail(session, 'The microphone connection was interrupted.'));
       child.on('close', () => {
-        if (this.session === session) this.fail(session, 'O reconhecimento terminou sem devolver texto. Tente novamente.');
+        if (this.session === session) this.fail(session, 'Recognition ended without returning text. Try again.');
       });
     } catch (error) {
-      this.fail(session, `Não foi possível iniciar o ditado: ${error.message}`);
+      this.fail(session, `Could not start dictation: ${error.message}`);
     }
   }
 
@@ -50,21 +50,21 @@ class Dictation {
     session.state = 'stopping';
     this.changed(session.state, session.terminal);
     session.child.stdin.write('stop\n');
-    session.timer = setTimeout(() => this.fail(session, 'A transcrição demorou demasiado. O ditado foi cancelado; nada foi enviado.'), 60000);
+    session.timer = setTimeout(() => this.fail(session, 'Transcription timed out. Dictation was cancelled; nothing was sent.'), 60000);
     session.timer.unref();
   }
 
   read(session, data) {
     if (this.session !== session) return;
     session.buffer += data;
-    if (Buffer.byteLength(session.buffer, 'utf8') > 1024 * 1024) return this.fail(session, 'Resposta de reconhecimento demasiado grande.');
+    if (Buffer.byteLength(session.buffer, 'utf8') > 1024 * 1024) return this.fail(session, 'Recognition response is too large.');
     let newline;
     while (this.session === session && (newline = session.buffer.indexOf('\n')) !== -1) {
       const line = session.buffer.slice(0, newline);
       session.buffer = session.buffer.slice(newline + 1);
       let event;
-      try { event = JSON.parse(line); } catch { return this.fail(session, 'Resposta de reconhecimento inválida.'); }
-      if (!event || typeof event !== 'object') return this.fail(session, 'Resposta de reconhecimento inválida.');
+      try { event = JSON.parse(line); } catch { return this.fail(session, 'Invalid recognition response.'); }
+      if (!event || typeof event !== 'object') return this.fail(session, 'Invalid recognition response.');
       if (event.type === 'ready' && session.state === 'preparing') {
         session.state = 'recording';
         this.changed(session.state, session.terminal);
@@ -72,22 +72,22 @@ class Dictation {
         return this.fail(session, event.message.slice(0, 1000));
       } else if (event.type === 'final' && typeof event.text === 'string' && session.state === 'stopping') {
         const text = terminalText(event.text);
-        if (Buffer.byteLength(text, 'utf8') > 65536) return this.fail(session, 'O ditado excedeu o limite desta versão.');
+        if (Buffer.byteLength(text, 'utf8') > 65536) return this.fail(session, 'Dictation exceeded the size limit for this version.');
         const validTarget = this.vscode.window.activeTerminal === session.terminal && this.vscode.window.terminals.includes(session.terminal);
-        if (!validTarget) return this.cancel('Ditado cancelado: o terminal de origem deixou de estar ativo.');
+        if (!validTarget) return this.cancel('Dictation cancelled: the original terminal is no longer active.');
         this.finish(session);
-        if (!text) return void this.vscode.window.showInformationMessage('Não reconheci fala. Verifique o microfone e o idioma.');
+        if (!text) return void this.vscode.window.showInformationMessage('No speech recognized. Check the microphone and language.');
         try {
           session.terminal.sendText(text, false);
           session.terminal.show(true);
-          void this.vscode.window.setStatusBarMessage('Voz: texto inserido no prompt. Reveja antes de enviar.', 5000);
+          void this.vscode.window.setStatusBarMessage('VozTTY: text inserted. Review before sending.', 5000);
         } catch {
           // Preserve a failed delivery in a VS Code document, without using the clipboard.
           void this.vscode.workspace.openTextDocument({ content: text, language: 'plaintext' }).then(doc => this.vscode.window.showTextDocument(doc));
-          void this.vscode.window.showErrorMessage('Não foi possível inserir no terminal. O texto foi aberto num documento para não se perder.');
+          void this.vscode.window.showErrorMessage('Could not insert into the terminal. Your text was opened in a document for recovery.');
         }
       } else {
-        return this.fail(session, 'Evento inesperado do reconhecimento. O ditado foi cancelado.');
+        return this.fail(session, 'Unexpected recognition event. Dictation was cancelled.');
       }
     }
   }

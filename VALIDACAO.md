@@ -1,3 +1,5 @@
+> Publication update (2026-10-23): the maintainer authorized the public repository and both GitHub packages. Earlier private-development entries below are historical. The primary README and release notes contain the current English summary.
+
 # Validação privada — 2026-10-23
 
 Repositório privado, release v0.1.0 em rascunho. Nenhuma publicação pública autorizada. Extensão instalada: 0.1.1. Terminal próprio: primeira versão nativa 0.2.0, ainda experimental e sem notarização.
@@ -103,3 +105,11 @@ Teste nativo de regressão em WKWebView: 1120 → 620 → 800 → 1440 → 1120 
 ## Controlos da janela — 23/10/2026
 
 Barra de título nativa visível e três botões permanentes no cabeçalho: minimizar, maximizar/restaurar e fechar. Usam ações nativas NSWindow, com labels acessíveis e tooltips. Verificados no CUA numa instância de prévia com conteúdo sintético: os três botões estão presentes; maximizar/restaurar funcionou; fechar mostrou a confirmação e Keep Open preservou a sessão. O botão minimizar foi acionado; a inspeção CUA voltou a apresentar a janela, pelo que não se confirmou persistência no Dock. Sem encerrar sessões do responsável.
+
+## Public release preparation — 2026-10-23
+
+The maintainer explicitly authorized public GitHub distribution of both products. Extension 0.1.2 adds English command names, status/error text and permission descriptions without changing the dictation lifecycle or command IDs. The shared helper's own messages are now English. Terminal 0.2.0 includes the existing window/layout/icon fixes and a bundled MIT license.
+
+Release checks passed: 12 JavaScript unit tests; native text/PTY/resize checks; packaged VSIX 0.1.2 exercised in an isolated VS Code Extension Development Host with real Apple recognition on the synthetic 182-word audio, exact terminal delivery and no automatic Enter; archive contents and checksum checks; deep/strict code-signature verification after extracting the native ZIP. Test hooks and internal design/checkpoint files are excluded from installable packages. Finder metadata was removed by staging the final archive outside the synced Documents directory before verifying the extracted signature.
+
+The full Git history was scanned for secrets. Two generic-key matches were inside the unmodified xterm.js bundle; its bytes were verified against the official @xterm/xterm 6.0.0 npm archive (SHA-256 14903579ff54664cd72f8e8699e6961a6272c21863ec1c3b118cdc8af5d4a972). Only those exact historical fingerprints were excluded from the local audit; no other findings remained. Diagnostics, recordings and scanner reports stay outside the repository. Packages remain ad hoc signed and not Apple-notarized.

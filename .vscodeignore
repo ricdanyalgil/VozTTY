@@ -8,3 +8,12 @@ CONTRIBUTING.md
 .gitignore
 
 terminal/**
+
+CONTINUAR.md
+.github/**
+assets/terminal-codex.png
+assets/*.json
+
+.impeccable/**
+.taste-skill/**
+assets/voztty-icon.svg

@@ -30,10 +30,10 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
 
     func prepare(language: String, inputFile: String?) async {
         do {
-            guard #available(macOS 26, *) else { throw VoiceError.message("Voz requer macOS 26 ou superior.") }
-            guard SpeechTranscriber.isAvailable else { throw VoiceError.message("O reconhecimento local não está disponível neste Mac.") }
+            guard #available(macOS 26, *) else { throw VoiceError.message("VozTTY requires macOS 26 or later.") }
+            guard SpeechTranscriber.isAvailable else { throw VoiceError.message("Local speech recognition is unavailable on this Mac.") }
             guard let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale(identifier: language)) else {
-                throw VoiceError.message("Este idioma não é suportado pelo reconhecimento local deste Mac.")
+                throw VoiceError.message("This language is not supported by local speech recognition on this Mac.")
             }
             let transcriber = SpeechTranscriber(locale: locale, preset: .transcription)
             module = transcriber
@@ -47,11 +47,11 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
                 return
             }
             guard await AVCaptureDevice.requestAccess(for: .audio) else {
-                throw VoiceError.message("Autorize o microfone para o aplicativo que iniciou o ditado (VozTTY ou VS Code) em Definições do Sistema → Privacidade e Segurança → Microfone.")
+                throw VoiceError.message("Allow microphone access for the app that started dictation (VozTTY or VS Code) in System Settings → Privacy & Security → Microphone.")
             }
             try Task.checkCancellation()
             guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber]) else {
-                throw VoiceError.message("Não foi possível preparar o formato de áudio.")
+                throw VoiceError.message("Could not prepare the audio format.")
             }
             // shortcut: file-backed capture shows text after Stop; use streaming input when live preview is required.
             let folder = FileManager.default.temporaryDirectory.appendingPathComponent("voz-vscode-\(UUID().uuidString)", isDirectory: true)
@@ -59,7 +59,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
             directory = folder
             let capture = try AVAudioRecorder(url: folder.appendingPathComponent("audio.caf"), settings: format.settings)
             capture.delegate = self
-            guard capture.record() else { throw VoiceError.message("Não foi possível iniciar o microfone.") }
+            guard capture.record() else { throw VoiceError.message("Could not start the microphone.") }
             recorder = capture
             inputURL = capture.url
             emit("ready")
@@ -81,7 +81,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     }
 
     func transcribe(_ url: URL) async throws {
-        guard let module else { throw VoiceError.message("O reconhecimento não foi preparado.") }
+        guard let module else { throw VoiceError.message("Speech recognition was not prepared.") }
         let analysis = SpeechAnalyzer(modules: [module])
         analyzer = analysis
         let output = Task { () throws -> String in
@@ -118,7 +118,7 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     func fail(_ message: String) {
         var description = message
         do { try cleanup() }
-        catch { description += " Não foi possível apagar o áudio temporário." }
+        catch { description += " Could not remove temporary audio." }
         emit("error", "message", description)
         exit(1)
     }
@@ -126,17 +126,17 @@ final class VoiceEngine: NSObject, AVAudioRecorderDelegate {
     func cancel() {
         operation?.cancel()
         do { try cleanup() }
-        catch { emit("error", "message", "Não foi possível apagar o áudio temporário.") }
+        catch { emit("error", "message", "Could not remove temporary audio.") }
         exit(0)
     }
 
     nonisolated func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        let description = error?.localizedDescription ?? "A gravação do microfone falhou."
+        let description = error?.localizedDescription ?? "Microphone recording failed."
         Task { @MainActor in fail(description) }
     }
 
     nonisolated func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        if !flag { Task { @MainActor in fail("A gravação foi interrompida. Verifique o microfone e tente novamente.") } }
+        if !flag { Task { @MainActor in fail("Recording was interrupted. Check the microphone and try again.") } }
     }
 }
 
@@ -152,22 +152,22 @@ struct Main {
         var inputFile: String?
         var index = 0
         while index < args.count {
-            guard index + 1 < args.count else { emit("error", "message", "Argumentos inválidos."); exit(2) }
+            guard index + 1 < args.count else { emit("error", "message", "Invalid arguments."); exit(2) }
             switch args[index] {
             case "--language": language = args[index + 1]
             case "--file": inputFile = args[index + 1]
-            default: emit("error", "message", "Argumento desconhecido."); exit(2)
+            default: emit("error", "message", "Unknown argument."); exit(2)
             }
             index += 2
         }
-        guard ["pt-BR", "pt-PT", "en-US"].contains(language) else { emit("error", "message", "Idioma inválido."); exit(2) }
+        guard ["pt-BR", "pt-PT", "en-US"].contains(language) else { emit("error", "message", "Invalid language."); exit(2) }
         let engine = VoiceEngine()
         engine.operation = Task { await engine.prepare(language: language, inputFile: inputFile) }
         DispatchQueue.global().async {
             while let line = readLine() {
                 if line == "stop" { Task { @MainActor in engine.stop() } }
                 else if line == "cancel" { Task { @MainActor in engine.cancel() }; return }
-                else { Task { @MainActor in engine.fail("Comando de captura inválido.") }; return }
+                else { Task { @MainActor in engine.fail("Invalid recording command.") }; return }
             }
             Task { @MainActor in engine.cancel() }
         }

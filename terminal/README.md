@@ -15,6 +15,8 @@ The renderer is vendored with its upstream licenses. There is no Node.js runtime
 
 Click **Dictate**, wait for **Recording**, speak, then **Stop & insert**. The shortcut is **Control + Option + V** while the terminal is focused. **Esc** cancels. Select a language from the toolbar. Dictation is passed through xterm.js's paste path, including bracketed paste when the child application requests that mode. It never appends Return.
 
+The header includes persistent Minimize, Maximize/restore and Close controls in addition to the standard macOS title bar. Close uses the existing active-session confirmation.
+
 This preview has one window/session. No tabs, splits, session restoration, configurable profiles or notarization yet. Closing a running shell asks for confirmation. Closing the app loses unsent terminal text and unsaved recovery windows.
 
 ## Conversation layout

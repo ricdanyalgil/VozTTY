@@ -99,3 +99,7 @@ Confirmado no ICNS instalado: o fundo verde estava presente e o símbolo ausente
 Reproduzido no binário anterior: o pai medido pelo FitAddon tinha padding, mas a medição usava a largura total como espaço para a grelha. A grelha ficou fora do limite direito (8 px medidos), com 131 colunas a 1120 px. Margens movidas para body; o pai do xterm ficou sem padding, mantendo o mesmo espaçamento visual.
 
 Teste nativo de regressão em WKWebView: 1120 → 620 → 800 → 1440 → 1120 px. Com a correção, colunas 125 → 66 → 87 → 163 → 125, sem extravasamento à direita ou em baixo. O teste espera a conclusão do FitAddon em cada tamanho, em vez de aceitar uma grelha antiga menor. Antes falhou; depois passou. Evidência local: work/bounds-before.json e work/bounds-final.json. Não depende de login, voz ou prompts enviados.
+
+## Controlos da janela — 23/10/2026
+
+Barra de título nativa visível e três botões permanentes no cabeçalho: minimizar, maximizar/restaurar e fechar. Usam ações nativas NSWindow, com labels acessíveis e tooltips. Verificados no CUA numa instância de prévia com conteúdo sintético: os três botões estão presentes; maximizar/restaurar funcionou; fechar mostrou a confirmação e Keep Open preservou a sessão. O botão minimizar foi acionado; a inspeção CUA voltou a apresentar a janela, pelo que não se confirmou persistência no Dock. Sem encerrar sessões do responsável.

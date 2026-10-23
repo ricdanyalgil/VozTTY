@@ -38,3 +38,7 @@ O ICNS anterior tinha o fundo verde sem o símbolo. SVG corrigido para formas pr
 ## Corte lateral corrigido
 
 O FitAddon calculava a largura do pai com padding como se estivesse toda disponível para texto. Margens movidas para body, deixando o elemento medido sem padding; preservada a aparência. Teste nativo VOZ_TEST_MODE=layout reproduz o erro anterior e verifica limites/dimensionamento após redimensionar. A correção é carregada por novas instâncias, sem terminar sessões abertas.
+
+## Botões permanentes da janela
+
+Adicionados minimizar, maximizar/restaurar e fechar no cabeçalho, além da barra nativa não transparente. Fechar usa performClose e respeita a confirmação de sessão ativa. Teste CUA verificou presença, zoom/restauro e cancelar fecho; minização acionada, persistência no Dock não confirmada. Atualização aplica-se a novas instâncias, sem terminar as sessões atuais.

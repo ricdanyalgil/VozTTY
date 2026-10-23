@@ -30,7 +30,8 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         window.delegate = self
         window.appearance = NSAppearance(named: .darkAqua)
         window.backgroundColor = .black
-        window.titlebarAppearsTransparent = true
+        window.titlebarAppearsTransparent = false
+        window.titleVisibility = .visible
         web.underPageBackgroundColor = .black
         web.navigationDelegate = self
         web.configuration.userContentController.add(self, name: "terminal")
@@ -65,7 +66,21 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         identity.orientation = .vertical
         identity.alignment = .leading
         identity.spacing = 3
-        let bar = NSStackView(views: [identity, spacer, language, cancel, microphone])
+        let windowControls = NSStackView()
+        windowControls.spacing = 4
+        for (symbol, label, action) in [
+            ("minus", "Minimize window", #selector(NSWindow.performMiniaturize(_:))),
+            ("arrow.up.left.and.arrow.down.right", "Maximize or restore window", #selector(NSWindow.zoom(_:))),
+            ("xmark", "Close window", #selector(NSWindow.performClose(_:)))
+        ] {
+            let button = NSButton(image: NSImage(systemSymbolName: symbol, accessibilityDescription: label)!, target: window, action: action)
+            button.bezelStyle = .rounded
+            button.toolTip = label
+            button.setAccessibilityLabel(label)
+            button.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            windowControls.addArrangedSubview(button)
+        }
+        let bar = NSStackView(views: [identity, spacer, language, cancel, microphone, windowControls])
         bar.orientation = .horizontal
         bar.spacing = 12
         bar.edgeInsets = NSEdgeInsets(top: 10, left: 24, bottom: 10, right: 24)

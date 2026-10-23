@@ -61,3 +61,7 @@ Baseline traffic captured locally in work/github-growth-baseline.json: 0 views, 
 Social preview upload: Chrome is authenticated and the repository Settings page is open, but native browser controls repeatedly fail with noWindowsAvailable/offscreen errors. Generated cover is ready; do not claim the GitHub social preview has been applied without verification. The in-app browser is signed out.
 
 Publication verified: https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.6 is public and marked prerelease, with native ZIP 0.2.6, extension VSIX 0.1.3, demo MP4 and SHA256SUMS. All three assets were downloaded without authentication and matched the published checksums. Both packaged helpers match the production helper; native package signature verified. Native 0.2.6 is installed, without restarting user sessions. Social-preview upload remains pending due browser-control failures, despite authenticated Chrome. A larger-wave synthetic visual proof is saved outside the repo in outputs/voztty-larger-wave-preview.png. Owned test windows are cleaned up at task completion.
+
+## Social preview completed
+
+The generated 1280 × 640 cover was uploaded through authenticated GitHub Settings. GitHub GraphQL confirms `usesCustomOpenGraphImage: true`, and the public repository image was visually verified. This resolves all earlier social-preview-upload pending notes. No app code changed.

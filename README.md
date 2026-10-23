@@ -174,7 +174,8 @@ No npm install is required for production dependencies. Native checks, test-only
 Bug reports, documentation improvements, accessibility feedback, recognition-language testing and pull requests are all welcome. First contribution? A small documentation fix or a reproducible bug report is a great place to start.
 
 - Read the [contribution guide](CONTRIBUTING.md).
-- [Report a bug or propose an idea](https://github.com/ricdanyalgil/VozTTY/issues).
+- [Report a bug or propose an improvement](https://github.com/ricdanyalgil/VozTTY/issues/new/choose).
+- [Ask a question or share your workflow](https://github.com/ricdanyalgil/VozTTY/discussions).
 - [Open a pull request](https://github.com/ricdanyalgil/VozTTY/pulls).
 - Please use synthetic examples instead of private recordings or sensitive transcripts.
 

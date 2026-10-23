@@ -1,0 +1,28 @@
+name: Suggest an improvement
+description: Share a concrete problem and how VozTTY could help.
+title: "[Idea] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We would love to hear your idea. Search existing issues before opening a new one.
+        For questions and early brainstorming, use Discussions. Keep examples free of private information.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe your workflow and where you get stuck.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would help?
+      description: Explain the behavior you would like and which client it applies to (native terminal, VS Code or both).
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or examples
+      description: Optional workarounds or examples that clarify the idea.

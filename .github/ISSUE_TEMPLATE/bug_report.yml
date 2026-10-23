@@ -1,0 +1,51 @@
+name: Report a bug
+description: Help us reproduce a problem with dictation, installation or terminal behavior.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve VozTTY. Search existing issues first.
+        This is public: use synthetic examples and remove credentials, personal audio and private prompts.
+  - type: dropdown
+    id: client
+    attributes:
+      label: Where does it happen?
+      options:
+        - VozTTY Terminal
+        - VS Code extension
+        - Both clients
+        - Build or installation
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include the app or extension version, macOS version, CPU architecture and spoken language. For CLI issues, add the CLI name/version and VS Code version if applicable.
+      placeholder: "VozTTY Terminal 0.2.6; macOS 26; Apple Silicon; pt-BR; Codex..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Describe the shortest sequence that reproduces the problem. For recognition issues, include a short non-sensitive example of what you said.
+      placeholder: |
+        1. Open a terminal...
+        2. Start dictation...
+        3. Stop and insert...
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: What should happen, and what happened instead? If this is a regression, mention the last working version.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional details
+      description: Optional error text or redacted screenshots. Do not include credentials, private recordings or personal prompts.

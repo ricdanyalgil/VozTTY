@@ -65,3 +65,7 @@ Publication verified: https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.6
 ## Social preview completed
 
 The generated 1280 × 640 cover was uploaded through authenticated GitHub Settings. GitHub GraphQL confirms `usesCustomOpenGraphImage: true`, and the public repository image was visually verified. This resolves all earlier social-preview-upload pending notes. No app code changed.
+
+## Community setup
+
+The maintainer requested continued improvements to the pasted GitHub General Settings screen. Enabled Discussions (default Announcements, General, Ideas, Polls, Q&A, Show and tell categories), added English bug/improvement issue forms, a question/install contact chooser and a pull request template, and linked community entry points from README/CONTRIBUTING. Forms were parsed as YAML and checked for required metadata/unique field IDs. No application, release, merge-policy, security, sponsorship or visibility changes.

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question or share your workflow
+    url: https://github.com/ricdanyalgil/VozTTY/discussions
+    about: Discuss setup, dictation workflows and ideas with the community.
+  - name: Read the installation guide
+    url: https://github.com/ricdanyalgil/VozTTY#download-and-install
+    about: Check requirements and choose the Mac app or VS Code extension.

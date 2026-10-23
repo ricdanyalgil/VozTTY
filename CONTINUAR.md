@@ -33,3 +33,9 @@ The maintainer requested removal of duplicate header window controls. Only stand
 ## Native 0.2.2 source follow-up
 
 In-terminal real microphone level bars, audio duration and Pause/Continue controls are implemented. Transcription remains after Stop, with no automatic Enter. The helper emits metering/pause events only with the native client's opt-in --meter flag, preserving the VS Code protocol. The 0.2.1 public release assets and VS Code 0.1.2 are unchanged. See terminal/README.md for the voice-controls integration mode.
+
+## Native 0.2.3 source follow-up
+
+The voice panel now has a full-width continuous 20-second intensity history with paused intervals marked, replacing the seven instantaneous bars. All history is held briefly in memory and cleared on completion/cancel. Reduced motion avoids continuous scrolling. The native recognition protocol is unchanged from 0.2.2. Public release assets remain 0.2.1.
+
+0.2.3 is installed locally. New microphone verification is pending macOS authorization; an untracked diagnostic helper reached AVCaptureDevice.requestAccess and waited. Computer Use cannot operate the system permission app; the maintainer was asked to authorize manually. Synthetic waveform/layout validation passed. No further X posts were created after the maintainer asked to stop.

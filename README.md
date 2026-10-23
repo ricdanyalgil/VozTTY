@@ -30,7 +30,7 @@
 
 Text arrives **after you stop recording**. Word-by-word live transcription is not included.
 
-**New in native terminal source builds (0.2.2):** an in-terminal listening panel with microphone level bars, recorded-audio duration, **Pause / Continue**, **Stop & insert**, and **Cancel**. Pause keeps your earlier audio and excludes speech until you continue. The GitHub download remains 0.2.1; build from source to try these new controls.
+**New in native terminal source builds (0.2.3):** a continuous, full-width voice activity strip showing the last 20 seconds, with pauses marked on the timeline, recorded-audio duration, **Pause / Continue**, **Stop & insert**, and **Cancel**. Pause keeps your earlier audio and excludes speech until you continue. The GitHub download remains 0.2.1; build from source to try these new controls.
 
 ## Two ways to work
 

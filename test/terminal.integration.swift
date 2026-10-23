@@ -59,11 +59,11 @@ extension TerminalWindow {
                 }
                 try await speak("Testando os controles de voz. Guarde esta primeira frase.")
                 try await testUntil("No audio meter events arrived.") { readings.count > 5 }
-                let barsMoved = try await web.evaluateJavaScript("[...document.querySelectorAll('#voice-wave span')].some(bar => parseFloat(bar.style.height) > 4)") as? Bool == true
+                let waveMoved = try await web.evaluateJavaScript("voiceSamples.length > 5 && voiceSamples.some(sample => sample.level > 0.05) && document.getElementById('voice-envelope').getAttribute('d').length > 80") as? Bool == true
                 try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
                 try await testUntil("Pause was not acknowledged.") { self.dictation.state == .paused }
                 let countAtPause = readings.count
-                let pauseUI = try await web.evaluateJavaScript("document.getElementById('voice-status').textContent === 'Recording paused' && document.getElementById('voice-pause').textContent === 'Continue' && [...document.querySelectorAll('#voice-wave span')].every(bar => bar.style.height === '4px')") as? Bool == true
+                let pauseUI = try await web.evaluateJavaScript("document.getElementById('voice-status').textContent === 'Recording paused' && document.getElementById('voice-pause').textContent === 'Continue' && voiceSamples.length > 5 && voiceSamples.at(-1).level === 0 && voicePauses.length === 1 && voicePauses[0].end === undefined") as? Bool == true
                 try await speak("Esta frase pausada deve ficar fora do texto.")
                 guard readings.count == countAtPause, pauseUI else { throw VoiceTestError.message("Paused audio metering or UI is incorrect.") }
                 try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
@@ -76,9 +76,9 @@ extension TerminalWindow {
                 guard let transcript, failure == nil else { throw VoiceTestError.message(failure ?? "No transcript") }
                 try await testUntil("Transcript was not inserted.") { !inputs.isEmpty }
                 let sent = inputs.joined().replacingOccurrences(of: "\u{1b}[200~", with: "").replacingOccurrences(of: "\u{1b}[201~", with: "")
-                guard sent == promptText(transcript), !sent.contains("\n"), !sent.contains("\r"), !transcript.lowercased().contains("frase pausada"), transcript.lowercased().contains("primeira frase"), transcript.lowercased().contains("frase final"), barsMoved else { throw VoiceTestError.message("Pause preservation, meter or draft transport failed.") }
+                guard sent == promptText(transcript), !sent.contains("\n"), !sent.contains("\r"), !transcript.lowercased().contains("frase pausada"), transcript.lowercased().contains("primeira frase"), transcript.lowercased().contains("frase final"), waveMoved else { throw VoiceTestError.message("Pause preservation, meter or draft transport failed.") }
                 result["meterEvents"] = readings.count
-                result["barsReactToAudio"] = barsMoved
+                result["continuousHistoryReactsToAudio"] = waveMoved
                 result["pauseStopsMetering"] = true
                 result["pausedSpeechExcluded"] = true
                 result["beforeAndAfterPausePreserved"] = true
@@ -109,7 +109,7 @@ extension TerminalWindow {
                 var sizes: [[String: Any]] = []
                 for size in [NSSize(width: 1120, height: 720), NSSize(width: 620, height: 380), NSSize(width: 800, height: 600), NSSize(width: 1440, height: 900), NSSize(width: 1120, height: 720)] {
                     window.setContentSize(size)
-                    try await web.evaluateJavaScript("window.voz.state('recording'); window.voz.meter(0.8, 12)")
+                    try await web.evaluateJavaScript("(() => { window.voz.state('recording'); const now = performance.now(); voiceSamples = Array.from({length: 180}, (_, i) => ({at: now - 18000 + i * 100, level: i > 90 && i < 120 ? 0 : Math.abs(Math.sin(i * .7)) * (.3 + .6 * Math.abs(Math.sin(i * .09)))})); voicePauses = [{start: now - 9000, end: now - 6000}]; drawVoiceWave(now); })()")
                     var metrics: [String: Any] = [:]
                     do {
                         try await testUntil("Terminal grid extends beyond its content area.", seconds: 4) {
@@ -123,7 +123,17 @@ extension TerminalWindow {
                     sizes.append(metrics)
                 }
                 result["sizes"] = sizes
+                let pauseHistory = try await web.evaluateJavaScript("document.querySelector('#voice-pauses rect') !== null && voiceSamples.length > 100") as? Bool == true
+                guard pauseHistory else { throw VoiceTestError.message("The continuous waveform lost its voice or pause history.") }
+                result["pauseHistoryRendered"] = true
+                if env["VOZ_TEST_KEEP_OPEN"] == "1" {
+                    window.title = "VozTTY — Synthetic voice history preview"
+                    try await web.evaluateJavaScript("cancelAnimationFrame(waveFrame); waveFrame = undefined")
+                    result["passed"] = true
+                    save(); return
+                }
                 try await web.evaluateJavaScript("window.voz.state('idle')")
+                guard try await web.evaluateJavaScript("voiceSamples.length === 0 && voicePauses.length === 0 && waveFrame === undefined") as? Bool == true else { throw VoiceTestError.message("Voice history was retained after completion.") }
                 result["passed"] = true
                 save(); closeForTest(); return
             }

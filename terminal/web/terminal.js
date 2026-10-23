@@ -34,7 +34,22 @@ const voiceHint = document.getElementById('voice-hint');
 const voiceTime = document.getElementById('voice-time');
 const pauseButton = document.getElementById('voice-pause');
 const stopButton = document.getElementById('voice-stop');
-const voiceBars = Array.from({length: 7}, () => document.getElementById('voice-wave').appendChild(document.createElement('span')));
+const voiceEnvelope = document.getElementById('voice-envelope');
+const pauseMarks = document.getElementById('voice-pauses');
+let voiceSamples = [], voicePauses = [], waveFrame, lastWaveDraw = 0;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+function drawVoiceWave(now = performance.now()) {
+  voiceSamples = voiceSamples.filter(sample => sample.at >= now - 20000).slice(-220);
+  voicePauses = voicePauses.filter(pause => (pause.end ?? now) >= now - 20000);
+  const {path, bands} = voiceWave(voiceSamples, voicePauses, now);
+  voiceEnvelope.setAttribute('d', path);
+  // Geometry comes only from finite local timestamps, never transcript or CLI text.
+  pauseMarks.innerHTML = bands.map(band => `<rect x="${band.x}" y="0" width="${Math.max(2, band.width)}" height="64"/><line x1="${band.x}" y1="0" x2="${band.x}" y2="64"/>${band.width > 48 ? `<text x="${band.x + 8}" y="14">PAUSE</text>` : ''}`).join('');
+}
+function animateVoiceWave(now) {
+  if (now - lastWaveDraw >= 33) { drawVoiceWave(now); lastWaveDraw = now; }
+  waveFrame = requestAnimationFrame(animateVoiceWave);
+}
 document.getElementById('voice-cancel').addEventListener('click', () => send({type: 'cancelVoice'}));
 pauseButton.addEventListener('click', () => send({type: 'pauseVoice'}));
 stopButton.addEventListener('click', () => send({type: 'voice'}));
@@ -60,11 +75,24 @@ window.voz = {
   insert(text) { term.paste(text); term.focus(); },
   focus() { term.focus(); },
   state(state) {
+    const now = performance.now();
+    if (state === 'preparing' || state === 'idle') { voiceSamples = []; voicePauses = []; }
+    if (state === 'paused') {
+      voiceSamples.push({at: now, level: 0});
+      voicePauses.push({start: now});
+    }
+    if (state === 'recording' && voicePauses.at(-1)?.end === undefined && voicePauses.length) {
+      voicePauses.at(-1).end = now;
+      voiceSamples.push({at: now, level: 0});
+    }
+    if (waveFrame !== undefined) cancelAnimationFrame(waveFrame);
+    waveFrame = undefined;
+    if (['recording', 'pausing', 'paused', 'resuming'].includes(state) && !reducedMotion.matches) waveFrame = requestAnimationFrame(animateVoiceWave);
     document.body.dataset.dictating = String(state !== 'idle');
     voicePanel.hidden = state === 'idle';
     voicePanel.dataset.state = state;
     const labels = {
-      idle: '', preparing: 'Preparing microphone…', recording: 'Listening to you',
+      idle: '', preparing: 'Preparing microphone…', recording: 'Voice recording',
       pausing: 'Pausing…', paused: 'Recording paused', resuming: 'Resuming…', stopping: 'Transcribing on your Mac…'
     };
     voiceStatus.textContent = labels[state] ?? '';
@@ -76,13 +104,14 @@ window.voz = {
     pauseButton.disabled = !['recording', 'paused'].includes(state);
     pauseButton.setAttribute('aria-pressed', String(state === 'paused'));
     stopButton.disabled = !['recording', 'paused'].includes(state);
-    for (const bar of voiceBars) bar.style.height = '4px';
+    drawVoiceWave(now);
     if (state === 'preparing' || state === 'idle') voiceTime.textContent = '0:00';
   },
   meter(level, seconds) {
     if (voicePanel.dataset.state !== 'recording' || !Number.isFinite(level) || !Number.isFinite(seconds)) return;
     const value = Math.max(0, Math.min(1, level));
-    voiceBars.forEach((bar, i) => { bar.style.height = `${4 + value * (32 - Math.abs(i - 3) * 5)}px`; });
+    voiceSamples.push({at: performance.now(), level: value});
+    drawVoiceWave();
     const total = Math.max(0, Math.floor(seconds));
     voiceTime.textContent = `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
   },

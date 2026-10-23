@@ -11,7 +11,6 @@
 <body>
 <section id="voice-panel" aria-label="Voice dictation" hidden>
   <div class="voice-info">
-    <div id="voice-wave" aria-hidden="true"></div>
     <div><strong id="voice-status" role="status">Preparing microphone…</strong><p id="voice-hint">Audio stays on your Mac.</p></div>
     <time id="voice-time" aria-label="Recorded audio duration">0:00</time>
   </div>
@@ -20,7 +19,16 @@
     <button id="voice-stop" type="button">Stop &amp; insert</button>
     <button id="voice-cancel" type="button">Cancel</button>
   </div>
+  <div class="voice-history" aria-label="Recent microphone intensity, last 20 seconds, with pauses marked">
+    <svg id="voice-wave" viewBox="0 0 1000 64" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="32" x2="1000" y2="32" class="wave-baseline" />
+      <path id="voice-envelope" d="M0,32 L1000,32" />
+      <g id="voice-pauses"></g>
+      <line x1="999" y1="3" x2="999" y2="61" class="wave-now" />
+    </svg>
+    <div class="voice-scale"><span>−20s · recent voice activity</span><span>Now</span></div>
+  </div>
 </section>
 <main id="terminal" aria-label="Terminal session"></main>
-<script src="vendor/xterm.js"></script><script src="vendor/addon-fit.js"></script><script src="prompt-rows.js"></script><script src="terminal.js"></script></body>
+<script src="vendor/xterm.js"></script><script src="vendor/addon-fit.js"></script><script src="prompt-rows.js"></script><script src="voice-wave.js"></script><script src="terminal.js"></script></body>
 </html>

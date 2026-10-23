@@ -57,7 +57,7 @@ cd VozTTY
 open terminal/VozTTY.app
 ```
 
-The build reuses the same Swift recognition helper as the extension. The shell is `/bin/zsh -l`; your normal shell configuration applies. Run your installed `claude`, `codex` or `gemini` command as you would in another terminal. VozTTY does not bundle those CLIs or sign in for you.
+The build reuses the same Swift recognition helper as the extension. The shell is `/bin/zsh -l`; your normal shell configuration applies. Run your installed `claude`, `codex`, `agy` or `gemini` command as you would in another terminal. VozTTY does not bundle those CLIs or sign in for you.
 
 For launching an executable directly from another shell:
 
@@ -92,12 +92,14 @@ Tests check **draft insertion**, not whether an assistant generated a response. 
 | Long voice capture in VozTTY Terminal | Controlled physical-microphone test: **82 seconds, 182 recognized words**, opening and closing preserved, existing prefix retained, no Enter |
 | Codex CLI in VozTTY Terminal | Long draft visible in the actual composer, left unsent |
 | Claude Code in VozTTY Terminal | Long draft retained as a **Pasted text** block, left unsent |
-| Gemini CLI | Account/service authentication blocker; input compatibility not yet confirmed |
+| Gemini CLI / Antigravity CLI | Personal Google accounts must use the official successor, `agy`; onboarding and input check pending |
 | Claude Code + Codex CLI through the VS Code extension | 182-word drafts retained, no Enter; synthetic long audio with the real Apple recognizer |
 
 The long acoustic test used speech played through the Mac's speakers and recorded through its physical microphone. Earlier acoustic attempts lost words; the controlled repeat preserved the opening and closing. Recognition can still substitute words and punctuation. **This is an integration check, not an accuracy benchmark or a completed long-form test with the maintainer's own voice.**
 
 See [VALIDACAO.md](VALIDACAO.md) for test scope, versions, remaining checks and the prior `SIGPIPE` fix.
+
+For personal Google accounts, Google [moved terminal access to Antigravity CLI](https://github.com/google-gemini/gemini-cli/discussions/27274). Install the [official client](https://antigravity.google/docs/getting-started/) and run `agy` inside VozTTY or the VS Code terminal. Gemini CLI remains supported for eligible enterprise and paid API access. VozTTY does not change authentication, accept service terms or require an API key for dictation.
 
 ## Under the hood
 

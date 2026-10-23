@@ -61,3 +61,7 @@ Os primeiros testes de CLI no VS Code tinham pressupostos errados sobre blocos d
 - Recaptura visual do build final: o Mac bloqueou antes da captura após os ajustes menores de foco/cor do microfone. A revisão independente devolveu `recapture`; não houve aprovação visual final. A captura atual do README é do ensaio anterior do protótipo.
 
 Os testes automatizados fecham apenas as suas próprias janelas quando terminam. Uma janela normal do VozTTY ou do VS Code permanece aberta.
+
+## Continuação — cliente Google suportado (23/10/2026)
+
+A pesquisa nas fontes oficiais confirmou a migração de contas pessoais para Antigravity CLI: https://github.com/google-gemini/gemini-cli/discussions/27274 e https://antigravity.google/docs/getting-started/. Instalado `agy` 1.4.6 pela distribuição oficial via Homebrew Cask. Aberto dentro de uma cópia do VozTTY, em modo `plan`, fora do repositório privado. O fluxo avançou do login para a configuração e mostrou Gemini 4 Argon. Parou nos termos de serviço, que precisam de decisão do responsável; a partilha de interações surge marcada por defeito. Não se aceitou o acordo nem se alterou essa opção. A inserção de rascunho longo no Antigravity ainda não foi validada.

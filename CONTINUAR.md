@@ -27,3 +27,7 @@
 `npm test`, `./terminal/build.sh` e os comandos em `terminal/README.md`. As fontes de testes só entram no binário com `-D VOZ_TEST`. Uma janela automatizada pode fechar ao concluir; a aplicação normal deve permanecer aberta.
 
 `VALIDACAO.md` contém o registo de escopo e limitações. Os diagnósticos locais do trabalho ficam fora do repositório; não publicar ditados pessoais, dados de conta ou gravações.
+
+## Próximo passo atualizado — Antigravity
+
+O responsável confirmou o login Google, mas Gemini CLI continuou recusado pelo serviço. Confirmada a migração oficial e instalado Antigravity CLI (`agy` 1.4.6). A janela VozTTY com Antigravity avançou para os termos de serviço e mostra Gemini 4 Argon em modo plan. O responsável deve rever a opção de partilha de interações e concluir Done; não aceitar termos em seu nome. Depois verificar prompt e repetir inserção de 182 palavras sem Enter. Não substituir o comando gemini por alias nem alterar autenticação. Revisão visual completa continua adiada por preferência do responsável.

@@ -1,0 +1,13 @@
+.DS_Store
+node_modules/
+native/*.app/
+*.vsix
+*.zip
+*.caf
+*.wav
+*.m4a
+*.mp3
+*.log
+.env
+.env.*
+work/

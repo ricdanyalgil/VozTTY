@@ -1,0 +1,8 @@
+native/*.swift
+test/**
+build-helper.sh
+.vscodeignore
+*.vsix
+VALIDACAO.md
+CONTRIBUTING.md
+.gitignore

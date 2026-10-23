@@ -1,0 +1,120 @@
+{
+  "name": "voz-terminal",
+  "displayName": "VozTTY — Ditado no Terminal",
+  "description": "Microfone no terminal do VS Code. Ditado local no Mac, sem clipboard e sem envio automático.",
+  "version": "0.1.0",
+  "publisher": "danyalgil",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "test": "node --test test/dictation.test.js"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "voz.toggle",
+        "title": "Voz: Começar ditado no terminal",
+        "icon": "$(mic)",
+        "enablement": "!voz.active"
+      },
+      {
+        "command": "voz.stop",
+        "title": "Voz: Parar e inserir no prompt",
+        "icon": "$(debug-stop)",
+        "enablement": "voz.recording"
+      },
+      {
+        "command": "voz.cancel",
+        "title": "Voz: Cancelar ditado",
+        "icon": "$(close)",
+        "enablement": "voz.active"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "voz.toggle",
+          "when": "view == terminal && !voz.active",
+          "group": "navigation@0"
+        },
+        {
+          "command": "voz.stop",
+          "when": "view == terminal && voz.recording",
+          "group": "navigation@0"
+        },
+        {
+          "command": "voz.cancel",
+          "when": "view == terminal && voz.active",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "voz.toggle",
+          "when": "resourceScheme == vscode-terminal && !voz.active",
+          "group": "navigation@0"
+        },
+        {
+          "command": "voz.stop",
+          "when": "resourceScheme == vscode-terminal && voz.recording",
+          "group": "navigation@0"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "voz.toggle",
+        "key": "ctrl+alt+v",
+        "mac": "ctrl+alt+v",
+        "when": "terminalFocus && !voz.active"
+      },
+      {
+        "command": "voz.stop",
+        "key": "ctrl+alt+v",
+        "mac": "ctrl+alt+v",
+        "when": "terminalFocus && voz.recording"
+      },
+      {
+        "command": "voz.cancel",
+        "key": "escape",
+        "when": "terminalFocus && voz.active"
+      }
+    ],
+    "configuration": {
+      "title": "Voz",
+      "properties": {
+        "voz.language": {
+          "type": "string",
+          "enum": [
+            "pt-BR",
+            "pt-PT",
+            "en-US"
+          ],
+          "default": "pt-BR",
+          "scope": "application",
+          "description": "Idioma do reconhecimento local da Apple."
+        }
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricdanyalgil/VozTTY.git"
+  },
+  "homepage": "https://github.com/ricdanyalgil/VozTTY#readme",
+  "bugs": {
+    "url": "https://github.com/ricdanyalgil/VozTTY/issues"
+  }
+}

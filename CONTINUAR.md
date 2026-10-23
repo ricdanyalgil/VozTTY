@@ -2,7 +2,7 @@
 
 ## Publication authorization
 
-The maintainer explicitly authorized making the repository public and publishing both the VS Code extension and the native terminal on GitHub. Earlier instructions to keep development private have been superseded. Public release target: v0.2.0, with Terminal 0.2.0 and extension 0.1.2. Verify live GitHub state before reporting publication complete.
+The maintainer explicitly authorized making the repository public and publishing both the VS Code extension and the native terminal on GitHub. Earlier instructions to keep development private have been superseded. Public release v0.2.0 is published (not draft), with Terminal 0.2.0 and extension 0.1.2. Repository visibility was verified PUBLIC. All three release assets and the English README were downloaded without authentication and matched the local files. Release: https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.0 . This is a public prerelease; the VS Code Marketplace was not used.
 
 ## Current products
 

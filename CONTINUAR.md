@@ -39,3 +39,7 @@ In-terminal real microphone level bars, audio duration and Pause/Continue contro
 The voice panel now has a full-width continuous 20-second intensity history with paused intervals marked, replacing the seven instantaneous bars. All history is held briefly in memory and cleared on completion/cancel. Reduced motion avoids continuous scrolling. The native recognition protocol is unchanged from 0.2.2. Public release assets remain 0.2.1.
 
 0.2.3 is installed locally. After the maintainer authorized the microphone in macOS, the physical-microphone voice-controls recheck passed: 99 real meter events, continuous history reacting to audio, pause excluding speech while preserving the audio on both sides, Stop while paused, and exact transcript insertion without Return. The earlier authorization wait is resolved. Synthetic waveform/layout validation also passed. No further X posts were created after the maintainer asked to stop.
+
+## Native 0.2.4 compact voice line
+
+Replaced the large voice card with a transparent, borderless 40 px line: muted monospace status/duration, a 28 px continuous waveform, and small text controls with 40 px targets. Recent 20-second history and pause markers remain. Narrow-window styles truncate only the status text. Recognition and pause behavior are unchanged. Public release assets still remain 0.2.1.

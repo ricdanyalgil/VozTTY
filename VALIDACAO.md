@@ -135,3 +135,7 @@ Fifteen JavaScript checks pass, including time-positioned level history, complet
 ### Microphone authorization follow-up — 0.2.3
 
 After the maintainer authorized microphone access in macOS, the physical-microphone recheck passed with 99 real meter events. The continuous history reacted to audio; paused speech was excluded; the first and final sentences on either side of the pause were retained; Stop & insert worked while paused; the PTY received exactly the recognized text without Return. This used controlled synthetic Portuguese speech through the speakers and the physical microphone, not a natural-voice accuracy benchmark. The previous authorization blocker is resolved. Local evidence: work/continuous-microphone-authorized.json (not published).
+
+## Compact voice line — native source build 0.2.4
+
+Visual-only refinement: a transparent, borderless 40 px grid row with a 28 px waveform, muted monospace labels, and text controls. Native layout/history checks passed at 620, 800, 1120 and 1440 px with zero grid overflow. At 1120 px the terminal gains six visible rows compared with 0.2.3; at 620 px it gains five. Synthetic history was used for visual review. Microphone recognition was not rerun for this CSS-only change. Installed locally; public release assets remain 0.2.1. Owned preview windows were closed, preserving working app sessions.

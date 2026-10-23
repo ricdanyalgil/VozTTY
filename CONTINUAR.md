@@ -26,3 +26,7 @@
 4. Revisão visual completa ainda não foi aprovada. Não iniciar redesign adicional sem pedido.
 
 Não guardar/publicar gravações pessoais, credenciais ou dados de conta. Diagnósticos locais ficam em work/. Testes de integração entram apenas com -D VOZ_TEST; a aplicação instalada é a versão normal.
+
+## Layout atualizado
+
+Novo layout do terminal próprio: perguntas azuis com fundo azul discreto, respostas com as cores normais do CLI, cabeçalho em duas linhas e rodapé com legenda/atalhos. Prévia sintética identificada em assets/terminal-conversation.png, sem dados de conta. Codex real validado com 182 palavras, nenhuma submissão, destaque e seleção preservados. `npm test` agora inclui os dois testes do classificador visual (12 no total). Ler os limites em terminal/README.md: prefixos visuais podem coincidir com citações e não existe metadata universal de papéis nos CLIs. Não recolorir ou modificar o fluxo PTY. As janelas já abertas conservam a versão carregada; a nova UI aplica-se a novas instâncias.

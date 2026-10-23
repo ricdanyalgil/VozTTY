@@ -66,3 +66,7 @@ O teste `test/microphone.integration.js` exige `VOZ_TEST_MICROPHONE=1` e `VOZ_TE
 No terminal próprio, o ensaio acústico longo controlado captou 82 segundos e entregou 182 palavras, com início, fim e prefixo anterior preservados. Ensaios acústicos anteriores perderam partes do texto; continuam a ser necessários testes com fala longa natural do responsável. Não é um benchmark de precisão. Consulte [VALIDACAO.md](VALIDACAO.md).
 
 Ainda falta avaliar a recusa de permissões numa instalação nova, sessões remotas, uso continuado do terminal próprio e autenticação/compositor do Gemini.
+
+## Organização visual do terminal próprio
+
+Fundo preto, perguntas reconhecidas pelo marcador do CLI em azul suave e saída normal em cinzento claro. Cabeçalho com estado do microfone e rodapé com legenda e atalhos. A cor é apenas visual: não altera o texto, as permissões ou o envio. Usa os marcadores ›, ❯ e >; citações com o mesmo formato podem receber o destaque e continuações com quebra explícita podem conservar as cores do CLI.

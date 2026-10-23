@@ -52,6 +52,11 @@ extension TerminalWindow {
                 before = try await screenText()
             }
             if let path = env["VOZ_TEST_SCREEN"] { try before.write(toFile: path, atomically: true, encoding: .utf8) }
+            if before.contains("Update available"), before.contains("esc skip") {
+                shell.write("\u{1b}")
+                try await Task.sleep(for: .seconds(3))
+                before = try await screenText()
+            }
             guard let ready = env["VOZ_TEST_READY"], before.range(of: ready, options: .regularExpression) != nil else {
                 throw NSError(domain: "VozTTYTest", code: 2, userInfo: [NSLocalizedDescriptionKey: "CLI has not reached the expected input prompt. See the local screen capture."])
             }
@@ -118,6 +123,17 @@ extension TerminalWindow {
             result["automaticEnter"] = false
             guard shell.pid > 0, (result["prefixVisible"] as? Bool == true), (result["endingVisible"] as? Bool == true || result["pasteIndicator"] as? Bool == true) else {
                 throw NSError(domain: "VozTTYTest", code: 4, userInfo: [NSLocalizedDescriptionKey: "The CLI draft is not visibly confirmed. Inspect the local screen capture."])
+            }
+            if mode == "cli" {
+                window.makeKeyAndOrderFront(nil)
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                try await testUntil("No prompt accent was painted for the CLI composer.") {
+                    (try await self.web.evaluateJavaScript("accents.length")) as? Int ?? 0 > 0
+                }
+                result["accentedRows"] = try await web.evaluateJavaScript("accents.length")
+                let selectionPreserved = try await web.evaluateJavaScript("(() => { const row = accents[0].marker.line; const text = term.buffer.active.getLine(row).translateToString(true); term.select(0, row, term.cols); const selected = term.getSelection(); term.clearSelection(); return selected.trimEnd() === text.trimEnd(); })()") as? Bool == true
+                result["selectionPreserved"] = selectionPreserved
+                guard selectionPreserved else { throw NSError(domain: "VozTTYTest", code: 6, userInfo: [NSLocalizedDescriptionKey: "Accented text selection changed the terminal text."]) }
             }
             result["insertionPassed"] = true
             result["passed"] = mode != "long-microphone" || (result["openingPreserved"] as? Bool == true && result["closingPreserved"] as? Bool == true)

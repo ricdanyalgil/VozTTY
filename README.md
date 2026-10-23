@@ -6,9 +6,9 @@
 
 > **Private preview.** Built toward an MIT open-source release. The repository remains private and releases remain drafts until the maintainer approves publication. No Marketplace listing or public binary yet.
 
-<img src="assets/terminal-codex.png" width="1100" alt="The real VozTTY Mac terminal running Codex CLI, with a long dictated Portuguese draft still in the input field and a Dictate button in the window toolbar." />
+<img src="assets/terminal-conversation.png" width="1100" alt="VozTTY native terminal: blue question prompts, light gray replies, grouped voice controls and a separate keyboard-shortcut footer." />
 
-<p align="center"><sub>Native prototype during a real Codex CLI compatibility test. The Portuguese paragraph is synthetic test material; the draft is waiting for Enter.</sub></p>
+<p align="center"><sub>Real native app showing synthetic conversation fixtures to demonstrate the layout and prompt colors. No model response or voice accuracy is being claimed by this image.</sub></p>
 
 ## Keep the thought. Lose the typing.
 
@@ -79,6 +79,8 @@ npx @vscode/vsce package --no-dependencies --target darwin-arm64 \
 In VS Code, choose **Extensions → … → Install from VSIX…**. Open a terminal and look for the microphone. If it is missing, use **Developer: Reload Window** when you can safely interrupt the window.
 
 The extension ID is `danyalgil.voz-terminal`. Select a language in **Settings → Voz: Language**. Extension commands currently use Portuguese: **Voz: Começar ditado no terminal** starts a recording.
+
+The native terminal uses a black conversation surface: recognized question prompts are blue, ordinary replies remain light gray, and voice controls and shortcuts have separate areas. Accents follow the prompt markers used by the tested CLIs; see [layout limits](terminal/README.md#conversation-layout).
 
 ## Tested, not assumed
 

@@ -79,3 +79,13 @@ Na continuação, a aplicação instalada abriu Codex 0.163.0 e a UI mostrou o d
 ## Confirmação manual do responsável — Claude Code
 
 Em 23/10/2026, o responsável mostrou Claude Code 2.1.309, Opus 5.5, aberto na pasta VozTTY. A frase ditada “Testando o microfone no Cloud, testando o microfone do Cloud.” foi recebida e respondida pelo Claude. Confirma o percurso de voz natural até ao CLI, com substituição do nome Claude por Cloud; rever nomes próprios antes de enviar. O envio foi feito pelo responsável, não pelo teste automatizado. Com esta confirmação, os três clientes — Codex, Claude Code e Antigravity — têm teste manual curto de microfone confirmado. Não equivale a teste longo com a voz natural. Os avisos de regras e expiração do login pertencem à configuração do Claude e não foram alterados.
+
+## Organização visual e destaque de perguntas — 23/10/2026
+
+- Perguntas reconhecidas pelos marcadores ›, ❯ e > em azul suave, incluindo quebras automáticas; saída normal mantém o tom claro e as cores ANSI originais. Não são alterados bytes do PTY, texto ou envio.
+- Cabeçalho com identidade/estado agrupados; rodapé com legenda e atalhos; margens de leitura ampliadas.
+- 12 testes unitários: 10 da extensão e 2 de reconhecimento visual, Unicode, quebras e linhas reutilizadas.
+- Codex real: 182 palavras/1130 caracteres, prefixo e bloco mantidos, transporte exato, nenhum Enter, uma linha com destaque e seleção preservada. Evidência local: work/conversation-codex.json.
+- Prévia nativa capturada com conversa sintética identificada: assets/terminal-conversation.png. Não apresenta conteúdo gerado por um modelo.
+- A primeira verificação do destaque correu antes do primeiro desenho de uma janela em segundo plano; foi corrigida a espera visual no teste. Um aviso de atualização do Codex interrompeu a segunda execução; o teste passou a dispensá-lo com Escape, sem instalar atualizações ou alterar definições globais.
+- Limite: são marcadores visuais, não metadados de autor. Citações com o mesmo prefixo podem ficar azuis; continuações com quebra explícita sem marcador podem conservar a cor do CLI. O tema da extensão VS Code não foi alterado.

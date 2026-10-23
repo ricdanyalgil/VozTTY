@@ -17,6 +17,12 @@ Click **Dictate**, wait for **Recording**, speak, then **Stop & insert**. The sh
 
 This preview has one window/session. No tabs, splits, session restoration, configurable profiles or notarization yet. Closing a running shell asks for confirmation. Closing the app loses unsent terminal text and unsaved recovery windows.
 
+## Conversation layout
+
+The black terminal keeps questions in soft blue (`#a9d2ff`) on a subtle dark-blue background, with ordinary output in neutral light gray. The header groups app identity and microphone status; the footer separates the color legend from keyboard shortcuts. Terminal control sequences and clipboard contents are not rewritten to apply colors.
+
+Visual accents recognize lines starting with `›`, `❯` or `>` followed by whitespace, including their automatic line wraps. This covers the tested Codex, Claude Code and Antigravity prompts. It is a visual cue, not role metadata: a quoted output line using the same prefix can also be blue, and explicit multiline continuations without a prefix may keep their CLI colors. ANSI colors in other output are preserved. The renderer scans only the visible rows and refreshes accents on redraw, scroll and resize.
+
 ## Unit checks
 
 From the repository root:
@@ -27,6 +33,8 @@ xcrun swiftc -parse-as-library -swift-version 6 \
   -o /tmp/voztty-terminal-unit
 /tmp/voztty-terminal-unit
 ```
+
+`npm test` also checks prompt recognition, wrapping, Unicode and reused rows.
 
 Checks terminal control removal, preserved Unicode/punctuation, a real child PTY, resize and the difference between a draft and explicitly submitted input.
 

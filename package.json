@@ -19,7 +19,7 @@
     "onStartupFinished"
   ],
   "scripts": {
-    "test": "node --test test/dictation.test.js"
+    "test": "node --test test/dictation.test.js test/prompt-rows.test.js"
   },
   "contributes": {
     "commands": [

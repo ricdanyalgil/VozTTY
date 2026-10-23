@@ -31,11 +31,12 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         window.appearance = NSAppearance(named: .darkAqua)
         window.backgroundColor = .black
         window.titlebarAppearsTransparent = true
+        web.underPageBackgroundColor = .black
         web.navigationDelegate = self
         web.configuration.userContentController.add(self, name: "terminal")
         let brand = NSTextField(labelWithString: "VozTTY")
         brand.font = .systemFont(ofSize: 15, weight: .semibold)
-        status.font = .systemFont(ofSize: 12)
+        status.font = .systemFont(ofSize: 11)
         status.textColor = .secondaryLabelColor
         status.lineBreakMode = .byTruncatingTail
         status.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -60,20 +61,31 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         cancel.action = #selector(cancelVoice)
         cancel.isHidden = true
         let spacer = NSView()
-        let bar = NSStackView(views: [brand, status, spacer, language, cancel, microphone])
+        let identity = NSStackView(views: [brand, status])
+        identity.orientation = .vertical
+        identity.alignment = .leading
+        identity.spacing = 3
+        let bar = NSStackView(views: [identity, spacer, language, cancel, microphone])
         bar.orientation = .horizontal
         bar.spacing = 12
-        bar.edgeInsets = NSEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)
-        let footer = NSTextField(labelWithString: "Control + Option + V to dictate   ·   Esc to cancel   ·   Review before sending")
-        footer.font = .systemFont(ofSize: 11)
-        footer.textColor = .secondaryLabelColor
+        bar.edgeInsets = NSEdgeInsets(top: 10, left: 24, bottom: 10, right: 24)
+        let you = NSTextField(labelWithString: "› You")
+        you.textColor = NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
+        let assistant = NSTextField(labelWithString: "Assistant")
+        assistant.textColor = .labelColor
+        let shortcuts = NSTextField(labelWithString: "⌃⌥V Dictate   ·   Esc Cancel   ·   Enter Send")
+        shortcuts.textColor = .secondaryLabelColor
+        for label in [you, assistant, shortcuts] { label.font = .systemFont(ofSize: 11) }
+        let footer = NSStackView(views: [you, assistant, NSView(), shortcuts])
+        footer.orientation = .horizontal
+        footer.spacing = 16
         let root = NSView()
         window.contentView = root
         for view in [bar, web, footer] { view.translatesAutoresizingMaskIntoConstraints = false; root.addSubview(view) }
         NSLayoutConstraint.activate([
-            bar.topAnchor.constraint(equalTo: root.topAnchor), bar.leadingAnchor.constraint(equalTo: root.leadingAnchor), bar.trailingAnchor.constraint(equalTo: root.trailingAnchor), bar.heightAnchor.constraint(equalToConstant: 50),
-            web.topAnchor.constraint(equalTo: bar.bottomAnchor), web.leadingAnchor.constraint(equalTo: root.leadingAnchor), web.trailingAnchor.constraint(equalTo: root.trailingAnchor), web.bottomAnchor.constraint(equalTo: footer.topAnchor, constant: -8),
-            footer.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: 20), footer.bottomAnchor.constraint(equalTo: root.bottomAnchor, constant: -10)
+            bar.topAnchor.constraint(equalTo: root.topAnchor), bar.leadingAnchor.constraint(equalTo: root.leadingAnchor), bar.trailingAnchor.constraint(equalTo: root.trailingAnchor), bar.heightAnchor.constraint(equalToConstant: 64),
+            web.topAnchor.constraint(equalTo: bar.bottomAnchor), web.leadingAnchor.constraint(equalTo: root.leadingAnchor), web.trailingAnchor.constraint(equalTo: root.trailingAnchor), web.bottomAnchor.constraint(equalTo: footer.topAnchor, constant: -10),
+            footer.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: 24), footer.trailingAnchor.constraint(equalTo: root.trailingAnchor, constant: -24), footer.bottomAnchor.constraint(equalTo: root.bottomAnchor, constant: -14)
         ])
         shell.output = { [weak self] data in self?.js("window.voz.write(\(Self.json(data.base64EncodedString())))") }
         shell.ended = { [weak self] in

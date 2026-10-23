@@ -93,3 +93,9 @@ Em 23/10/2026, o responsável mostrou Claude Code 2.1.309, Opus 5.5, aberto na p
 ## Correção do ícone macOS — 23/10/2026
 
 Confirmado no ICNS instalado: o fundo verde estava presente e o símbolo ausente. A conversão do SVG não preservou o caminho com stroke. Substituído o símbolo por geometria preenchida equivalente e reexportados os dez tamanhos standard/Retina. O novo build-icon.sh verifica os dois componentes do símbolo antes da conversão e o símbolo depois de descodificar o ICNS. Sem alterar permissões ou encerrar sessões para limpar caches do Dock.
+
+## Corte na lateral / ajuste de colunas — 23/10/2026
+
+Reproduzido no binário anterior: o pai medido pelo FitAddon tinha padding, mas a medição usava a largura total como espaço para a grelha. A grelha ficou fora do limite direito (8 px medidos), com 131 colunas a 1120 px. Margens movidas para body; o pai do xterm ficou sem padding, mantendo o mesmo espaçamento visual.
+
+Teste nativo de regressão em WKWebView: 1120 → 620 → 800 → 1440 → 1120 px. Com a correção, colunas 125 → 66 → 87 → 163 → 125, sem extravasamento à direita ou em baixo. O teste espera a conclusão do FitAddon em cada tamanho, em vez de aceitar uma grelha antiga menor. Antes falhou; depois passou. Evidência local: work/bounds-before.json e work/bounds-final.json. Não depende de login, voz ou prompts enviados.

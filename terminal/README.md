@@ -44,6 +44,7 @@ Checks terminal control removal, preserved Unicode/punctuation, a real child PTY
 
 The harness requires `VOZ_TEST_RESULT`. Modes:
 
+- `VOZ_TEST_MODE=layout`: resizes the native window through 1120, 620, 800 and 1440 px widths, checks completed grid fitting and ensures no right/bottom overflow. Requires no model login or microphone.
 - `VOZ_TEST_MODE=inspect`: records startup metadata and optional local `VOZ_TEST_SCREEN`; does not insert a prompt.
 - `VOZ_TEST_MODE=cli`: requires `VOZ_TEST_READY` (an input-composer regex) and `VOZ_TEST_TRANSCRIPT` (a test transcript path). Inserts an existing prefix and a long transcript, then verifies the PTY bytes and the visible draft without Enter.
 - `VOZ_TEST_MODE=long-microphone`: additionally requires `VOZ_TEST_PHRASE` pointing to `test/fixtures/long-dictation.txt` and `VOZ_TEST_TRANSCRIPT` as the output path. Opens the real microphone and plays synthetic Portuguese speech through the current speakers. Checks opening/closing coverage, capture/file duration, draft insertion and no Return.

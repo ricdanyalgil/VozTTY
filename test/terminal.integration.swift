@@ -32,6 +32,28 @@ extension TerminalWindow {
             if let path = env["VOZ_TEST_SCREEN"] { try before.write(toFile: path, atomically: true, encoding: .utf8) }
             result["frontendReady"] = true
             result["childPID"] = shell.pid
+            if mode == "layout" {
+                window.makeKeyAndOrderFront(nil)
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                var sizes: [[String: Any]] = []
+                for size in [NSSize(width: 1120, height: 720), NSSize(width: 620, height: 380), NSSize(width: 800, height: 600), NSSize(width: 1440, height: 900), NSSize(width: 1120, height: 720)] {
+                    window.setContentSize(size)
+                    var metrics: [String: Any] = [:]
+                    do {
+                        try await testUntil("Terminal grid extends beyond its content area.", seconds: 4) {
+                            metrics = try await self.web.evaluateJavaScript("(() => { const box = document.getElementById('terminal').getBoundingClientRect(); const grid = document.querySelector('.xterm-screen').getBoundingClientRect(); const expected = fit.proposeDimensions(); return {width: innerWidth, height: innerHeight, columns: term.cols, rows: term.rows, rightOverflow: Math.max(0, grid.right - box.right), bottomOverflow: Math.max(0, grid.bottom - box.bottom), fits: term.cols === expected.cols && term.rows === expected.rows && grid.right <= box.right + 1 && grid.bottom <= box.bottom + 1 && document.body.scrollWidth <= innerWidth}; })()") as? [String: Any] ?? [:]
+                            return abs(self.web.bounds.width - size.width) < 1 && metrics["fits"] as? Bool == true
+                        }
+                    } catch {
+                        sizes.append(metrics); result["sizes"] = sizes
+                        throw error
+                    }
+                    sizes.append(metrics)
+                }
+                result["sizes"] = sizes
+                result["passed"] = true
+                save(); closeForTest(); return
+            }
             if mode == "inspect" { result["passed"] = true; save(); closeForTest(); return }
             if env["VOZ_TEST_TRUST_DISPOSABLE"] == "1", before.contains("Accessing workspace:"), before.contains("Yes, I trust this folder") {
                 let cwd = FileManager.default.currentDirectoryPath

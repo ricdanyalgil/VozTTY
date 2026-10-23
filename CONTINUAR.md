@@ -34,3 +34,7 @@ Novo layout do terminal próprio: perguntas azuis com fundo azul discreto, respo
 ## Ícone macOS corrigido
 
 O ICNS anterior tinha o fundo verde sem o símbolo. SVG corrigido para formas preenchidas; terminal/build-icon.sh regenera tamanhos standard/Retina e verifica o símbolo. Recompilar e reinstalar mantém as janelas abertas; o Dock pode precisar que a aplicação seja reaberta para largar o ícone em cache. Não terminar sessões do responsável para forçar a atualização.
+
+## Corte lateral corrigido
+
+O FitAddon calculava a largura do pai com padding como se estivesse toda disponível para texto. Margens movidas para body, deixando o elemento medido sem padding; preservada a aparência. Teste nativo VOZ_TEST_MODE=layout reproduz o erro anterior e verifica limites/dimensionamento após redimensionar. A correção é carregada por novas instâncias, sem terminar sessões abertas.

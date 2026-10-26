@@ -1,16 +1,36 @@
 import AppKit
 import WebKit
 
+/// Accepts files dragged from Finder and hands their paths to the terminal; everything else keeps WebKit's behaviour.
+final class DropWebView: WKWebView {
+    var droppedFiles: (([String]) -> Void)?
+    private func files(_ info: any NSDraggingInfo) -> [String] {
+        (info.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []).map(\.path)
+    }
+    override func draggingEntered(_ info: any NSDraggingInfo) -> NSDragOperation { files(info).isEmpty ? super.draggingEntered(info) : .copy }
+    override func draggingUpdated(_ info: any NSDraggingInfo) -> NSDragOperation { files(info).isEmpty ? super.draggingUpdated(info) : .copy }
+    override func prepareForDragOperation(_ info: any NSDraggingInfo) -> Bool { files(info).isEmpty ? super.prepareForDragOperation(info) : true }
+    override func performDragOperation(_ info: any NSDraggingInfo) -> Bool {
+        let paths = files(info)
+        guard !paths.isEmpty else { return super.performDragOperation(info) }
+        droppedFiles?(paths)
+        return true
+    }
+    override func concludeDragOperation(_ info: (any NSDraggingInfo)?) { if let info, !files(info).isEmpty { return }; super.concludeDragOperation(info) }
+}
+
 @MainActor
 final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelegate, NSWindowDelegate {
     let window: NSWindow
-    let web: WKWebView
+    let web: DropWebView
     let shell = ShellSession()
     let dictation = TerminalDictation()
     let status = NSTextField(labelWithString: "Speak instead of typing · ⌃⌥V to start")
     let microphone = NSButton()
-    let cancel = NSButton()
     let language = NSPopUpButton()
+    let you = NSTextField(labelWithString: "")
+    let assistant = NSTextField(labelWithString: "")
+    let shortcuts = NSTextField(labelWithString: "")
     private var launched = false
     private var allowClose = false
     private var recoveredTranscripts: [NSWindow] = []
@@ -21,7 +41,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
     override init() {
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .nonPersistent()
-        web = WKWebView(frame: .zero, configuration: config)
+        web = DropWebView(frame: .zero, configuration: config)
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1120, height: 720), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         super.init()
         window.title = "VozTTY"
@@ -43,44 +63,32 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         status.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         brand.setContentCompressionResistancePriority(.required, for: .horizontal)
         let savedLanguage = UserDefaults.standard.string(forKey: "language") ?? "pt-BR"
-        for (code, title) in [("pt-BR", "Portuguese (Brazil)"), ("pt-PT", "Portuguese (Portugal)"), ("en-US", "English (US)")] {
-            language.addItem(withTitle: title)
+        for code in ["pt-BR", "pt-PT", "en-US"] {
+            language.addItem(withTitle: code)
             language.lastItem?.representedObject = code
             if code == savedLanguage { language.select(language.lastItem) }
         }
-        language.toolTip = "Choose the language you will speak. Recognition runs on your Mac."
         language.setAccessibilityLabel("Dictation language")
         language.target = self
         language.action = #selector(changeLanguage)
-        microphone.title = "Dictate"
-        microphone.image = NSImage(systemSymbolName: "mic", accessibilityDescription: "Start dictation")
+        microphone.image = NSImage(systemSymbolName: "mic", accessibilityDescription: nil)
         microphone.imagePosition = .imageLeading
         microphone.bezelStyle = .rounded
         microphone.contentTintColor = NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
         microphone.setContentCompressionResistancePriority(.required, for: .horizontal)
         microphone.target = self
         microphone.action = #selector(toggleVoice)
-        microphone.toolTip = "Start voice dictation (Control + Option + V). Your text stays editable."
-        cancel.title = "Cancel"
-        cancel.toolTip = "Discard this recording without inserting any text."
-        cancel.bezelStyle = .rounded
-        cancel.target = self
-        cancel.action = #selector(cancelVoice)
-        cancel.isHidden = true
         let spacer = NSView()
         let identity = NSStackView(views: [brand, status])
         identity.orientation = .vertical
         identity.alignment = .leading
         identity.spacing = 3
-        let bar = NSStackView(views: [identity, spacer, language, cancel, microphone])
+        let bar = NSStackView(views: [identity, spacer, language, microphone])
         bar.orientation = .horizontal
         bar.spacing = 12
         bar.edgeInsets = NSEdgeInsets(top: 10, left: 24, bottom: 10, right: 24)
-        let you = NSTextField(labelWithString: "› Your input")
         you.textColor = NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
-        let assistant = NSTextField(labelWithString: "Terminal output")
         assistant.textColor = .labelColor
-        let shortcuts = NSTextField(labelWithString: "⌃⌥V Voice   ·   Esc Cancel")
         shortcuts.textColor = .secondaryLabelColor
         for label in [you, assistant, shortcuts] { label.font = .systemFont(ofSize: 11) }
         let footer = NSStackView(views: [you, assistant, NSView(), shortcuts])
@@ -94,11 +102,18 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
             web.topAnchor.constraint(equalTo: bar.bottomAnchor), web.leadingAnchor.constraint(equalTo: root.leadingAnchor), web.trailingAnchor.constraint(equalTo: root.trailingAnchor), web.bottomAnchor.constraint(equalTo: footer.topAnchor, constant: -10),
             footer.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: 24), footer.trailingAnchor.constraint(equalTo: root.trailingAnchor, constant: -24), footer.bottomAnchor.constraint(equalTo: root.bottomAnchor, constant: -14)
         ])
+        applyLanguage()
+        web.registerForDraggedTypes(web.registeredDraggedTypes + [.fileURL])
+        web.droppedFiles = { [weak self] paths in
+            guard let self else { return }
+            self.window.makeFirstResponder(self.web)
+            self.js("window.voz.drop(\(Self.json(paths)))")
+        }
         shell.output = { [weak self] data in self?.js("window.voz.write(\(Self.json(data.base64EncodedString())))") }
         shell.ended = { [weak self] in
             guard let self else { return }
             self.dictation.cancel()
-            self.status.stringValue = "Session ended · close this window when ready"
+            self.status.stringValue = self.tr("Session ended · close this window when ready", "Sessão encerrada · feche esta janela quando quiser")
             self.microphone.isEnabled = false
             self.js("window.voz.write(\(Self.json(Data("\r\n[Session ended]\r\n".utf8).base64EncodedString())))")
         }
@@ -106,11 +121,11 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         dictation.metered = { [weak self] level, seconds in self?.js("window.voz.meter(\(level), \(seconds))") }
         dictation.completed = { [weak self] text in
             guard let self else { return }
-            guard self.shell.pid > 0 else { self.recover(text, reason: "Session ended. Your dictation is preserved here."); return }
+            guard self.shell.pid > 0 else { self.recover(text, reason: self.tr("Session ended. Your dictation is preserved here.", "Sessão encerrada. Seu ditado ficou guardado aqui.")); return }
             self.web.evaluateJavaScript("window.voz.insert(\(Self.json(text)))") { [weak self] _, error in
                 guard let self else { return }
-                if let error { self.recover(text, reason: "Could not insert the transcript: \(error.localizedDescription)") }
-                else { self.status.stringValue = "Text inserted · review before pressing Enter"; self.inserted?(text) }
+                if let error { self.recover(text, reason: self.tr("Could not insert the transcript: ", "Não foi possível inserir o texto: ") + error.localizedDescription) }
+                else { self.status.stringValue = self.tr("Text inserted · review before pressing Enter", "Texto inserido · revise antes de apertar Enter"); self.inserted?(text) }
             }
         }
         dictation.failed = { [weak self] message in self?.error(message) }
@@ -121,7 +136,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
         window.makeKeyAndOrderFront(nil)
     }
 
-    static func json(_ value: String) -> String {
+    static func json(_ value: Any) -> String {
         String(data: try! JSONSerialization.data(withJSONObject: value, options: [.fragmentsAllowed]), encoding: .utf8)!
     }
     func js(_ script: String) { web.evaluateJavaScript(script, completionHandler: nil) }
@@ -130,7 +145,7 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
     private func recover(_ text: String, reason: String) {
         error(reason)
         let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 680, height: 360), styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
-        panel.title = "Recovered dictation — review before closing"
+        panel.title = tr("Recovered dictation — review before closing", "Ditado recuperado — revise antes de fechar")
         panel.isReleasedWhenClosed = false
         let scroll = NSScrollView(frame: panel.contentView!.bounds)
         scroll.autoresizingMask = [.width, .height]
@@ -150,33 +165,44 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
 
     @objc func toggleVoice() {
         if dictation.state == .recording || dictation.state == .paused { dictation.stop() }
-        else if dictation.state == .idle, shell.pid > 0 { dictation.start(language: language.selectedItem?.representedObject as? String ?? "pt-BR") }
+        else if dictation.state == .idle, shell.pid > 0 { dictation.start(language: languageCode) }
         window.makeFirstResponder(web)
         js("window.voz.focus()")
     }
     @objc func cancelVoice() { dictation.cancel(); window.makeFirstResponder(web) }
-    @objc func changeLanguage() { UserDefaults.standard.set(language.selectedItem?.representedObject as? String ?? "pt-BR", forKey: "language") }
+    @objc func changeLanguage() { UserDefaults.standard.set(languageCode, forKey: "language"); applyLanguage() }
+
+    var languageCode: String { language.selectedItem?.representedObject as? String ?? "pt-BR" }
+    /// The interface follows the language chosen for dictation.
+    func tr(_ en: String, _ pt: String) -> String { languageCode.hasPrefix("pt") ? pt : en }
+    private func applyLanguage() {
+        let names = ["pt-BR": tr("Portuguese (Brazil)", "Português (Brasil)"), "pt-PT": tr("Portuguese (Portugal)", "Português (Portugal)"), "en-US": tr("English (US)", "Inglês (EUA)")]
+        for item in language.itemArray { item.title = names[item.representedObject as? String ?? ""] ?? item.title }
+        language.toolTip = tr("Choose the language you will speak. Recognition runs on your Mac.", "Escolha o idioma em que vai falar. O reconhecimento roda no seu Mac.")
+        microphone.title = tr("Dictate", "Ditar")
+        microphone.toolTip = tr("Start voice dictation (Control + Option + V). Your text stays editable.", "Começar a ditar (Control + Option + V). O texto continua editável.")
+        you.stringValue = tr("› Your input", "› Sua entrada")
+        assistant.stringValue = tr("Terminal output", "Saída do terminal")
+        shortcuts.stringValue = tr("⌃⌥V Voice   ·   Esc Cancel   ·   Drop files to attach", "⌃⌥V Voz   ·   Esc Cancelar   ·   Arraste arquivos para anexar")
+        voiceState(dictation.state)
+    }
 
     private func voiceState(_ state: TerminalDictation.State) {
+        // While dictating, the controls live only in the voice line inside the terminal.
         let active = state != .idle
-        cancel.isHidden = !active
-        language.isEnabled = !active
-        let canStop = state == .recording || state == .paused
-        microphone.isEnabled = (state == .idle || canStop) && shell.pid > 0
-        microphone.contentTintColor = state == .recording ? .systemRed : NSColor(srgbRed: 169/255, green: 210/255, blue: 1, alpha: 1)
-        microphone.title = canStop ? "Stop & insert" : "Dictate"
-        microphone.toolTip = canStop ? "Stop recording and insert the text without sending it." : "Start voice dictation (Control + Option + V). Your text stays editable."
-        microphone.image = NSImage(systemSymbolName: canStop ? "stop.fill" : "mic", accessibilityDescription: microphone.title)
+        language.isHidden = active
+        microphone.isHidden = active
+        microphone.isEnabled = shell.pid > 0
         status.stringValue = switch state {
-        case .idle: "Speak instead of typing · ⌃⌥V to start"
-        case .preparing: "Preparing microphone · authorize access if macOS asks"
-        case .recording: "Listening · click Stop & insert when you are done"
-        case .pausing: "Pausing microphone…"
-        case .paused: "Paused · your recording is preserved"
-        case .resuming: "Resuming microphone…"
-        case .stopping: "Transcribing on your Mac…"
+        case .idle: tr("Speak instead of typing · ⌃⌥V to start", "Fale em vez de digitar · ⌃⌥V para começar")
+        case .preparing: tr("Preparing microphone · authorize access if macOS asks", "Preparando o microfone · autorize se o macOS pedir")
+        case .recording: tr("Listening · click Stop & insert when you are done", "Ouvindo · clique em Parar e inserir quando terminar")
+        case .pausing: tr("Pausing microphone…", "Pausando o microfone…")
+        case .paused: tr("Paused · your recording is preserved", "Pausado · sua gravação está preservada")
+        case .resuming: tr("Resuming microphone…", "Retomando o microfone…")
+        case .stopping: tr("Transcribing on your Mac…", "Transcrevendo no seu Mac…")
         }
-        js("window.voz.state(\(Self.json(state.rawValue)))")
+        js("window.voz.state(\(Self.json(state.rawValue)), \(Self.json(languageCode)))")
     }
 
     func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -216,10 +242,10 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         if !allowClose && shell.pid > 0 {
             let alert = NSAlert()
-            alert.messageText = "Close this terminal?"
-            alert.informativeText = "Running programs will end and unsent prompt text will be lost."
-            alert.addButton(withTitle: "Keep Open")
-            alert.addButton(withTitle: "Close Terminal")
+            alert.messageText = tr("Close this terminal?", "Fechar este terminal?")
+            alert.informativeText = tr("Running programs will end and unsent prompt text will be lost.", "Os programas em execução vão terminar e o texto não enviado será perdido.")
+            alert.addButton(withTitle: tr("Keep Open", "Manter aberto"))
+            alert.addButton(withTitle: tr("Close Terminal", "Fechar terminal"))
             guard alert.runModal() == .alertSecondButtonReturn else { return false }
         }
         allowClose = true

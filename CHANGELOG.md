@@ -1,5 +1,13 @@
 # Changelog
 
+## Public preview v0.2.7 — 2026-10-26
+
+Terminal 0.2.7; the VS Code extension remains 0.1.3.
+
+- Drag images, audio, PDFs or any file from Finder into the terminal to insert their escaped paths, so assistant CLIs can attach them. No Enter is sent; names with control characters are skipped.
+- While dictating, the top-bar language picker and Dictate button hide; Pause, Stop & insert and Cancel appear only once, in the voice strip.
+- The interface follows the dictation language: Portuguese labels for pt-BR/pt-PT, English for en-US.
+
 ## Public preview v0.2.6 — 2026-10-23
 
 Terminal 0.2.6 and VS Code 0.1.3.

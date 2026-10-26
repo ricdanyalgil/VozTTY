@@ -6,6 +6,26 @@ private enum VoiceTestError: LocalizedError {
     var errorDescription: String? { switch self { case .message(let text): return text } }
 }
 
+/// A Finder-like file drag, so the native drop path runs without a mouse.
+@MainActor private final class FileDrag: NSObject, @MainActor NSDraggingInfo {
+    let draggingPasteboard: NSPasteboard
+    init(_ urls: [URL]) { draggingPasteboard = NSPasteboard(name: .init("VozTTYTestDrag")); draggingPasteboard.clearContents(); draggingPasteboard.writeObjects(urls as [NSURL]) }
+    var draggingDestinationWindow: NSWindow? { nil }
+    var draggingSourceOperationMask: NSDragOperation { .copy }
+    var draggingLocation: NSPoint { .zero }
+    var draggedImageLocation: NSPoint { .zero }
+    var draggedImage: NSImage? { nil }
+    var draggingSource: Any? { nil }
+    var draggingSequenceNumber: Int { 1 }
+    func slideDraggedImage(to screenPoint: NSPoint) {}
+    var draggingFormation: NSDraggingFormation = .default
+    var animatesToDestination = false
+    var numberOfValidItemsForDrop = 0
+    func enumerateDraggingItems(options: NSDraggingItemEnumerationOptions = [], for view: NSView?, classes: [AnyClass], searchOptions: [NSPasteboard.ReadingOptionKey: Any] = [:], using block: (NSDraggingItem, Int, UnsafeMutablePointer<ObjCBool>) -> Void) {}
+    var springLoadingHighlight: NSSpringLoadingHighlight { .none }
+    func resetSpringLoading() {}
+}
+
 @MainActor
 extension TerminalWindow {
     func testUntil(_ message: String, seconds: Double = 30, _ check: () async throws -> Bool) async throws {
@@ -63,7 +83,7 @@ extension TerminalWindow {
                 try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
                 try await testUntil("Pause was not acknowledged.") { self.dictation.state == .paused }
                 let countAtPause = readings.count
-                let pauseUI = try await web.evaluateJavaScript("document.getElementById('voice-status').textContent === 'Recording paused' && document.getElementById('voice-pause').textContent === 'Continue' && voiceSamples.length > 5 && voiceSamples.at(-1).level === 0 && voicePauses.length === 1 && voicePauses[0].end === undefined") as? Bool == true
+                let pauseUI = try await web.evaluateJavaScript("document.getElementById('voice-panel').dataset.state === 'paused' && document.getElementById('voice-pause').getAttribute('aria-pressed') === 'true' && voiceSamples.length > 5 && voiceSamples.at(-1).level === 0 && voicePauses.length === 1 && voicePauses[0].end === undefined") as? Bool == true
                 try await speak("Esta frase pausada deve ficar fora do texto.")
                 guard readings.count == countAtPause, pauseUI else { throw VoiceTestError.message("Paused audio metering or UI is incorrect.") }
                 try await web.evaluateJavaScript("document.getElementById('voice-pause').click()")
@@ -134,6 +154,23 @@ extension TerminalWindow {
                 }
                 try await web.evaluateJavaScript("window.voz.state('idle')")
                 guard try await web.evaluateJavaScript("voiceSamples.length === 0 && voicePauses.length === 0 && waveFrame === undefined") as? Bool == true else { throw VoiceTestError.message("Voice history was retained after completion.") }
+                result["passed"] = true
+                save(); closeForTest(); return
+            }
+            if mode == "drop" {
+                let folder = FileManager.default.temporaryDirectory.appendingPathComponent("voztty-drop-\(UUID().uuidString)")
+                try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                defer { try? FileManager.default.removeItem(at: folder) }
+                let files = ["Câmera térmica (spec).pdf", "foto 1.png", "nota de voz.m4a"].map { folder.appendingPathComponent($0) }
+                for file in files { try Data().write(to: file) }
+                let drag = FileDrag(files)
+                guard web.draggingEntered(drag) == .copy, web.performDragOperation(drag) else { throw VoiceTestError.message("The terminal refused a Finder file drop.") }
+                web.concludeDragOperation(drag)
+                try await testUntil("Dropped paths did not reach the PTY.", seconds: 5) { !inputs.isEmpty }
+                let sent = inputs.joined().replacingOccurrences(of: "\u{1b}[200~", with: "").replacingOccurrences(of: "\u{1b}[201~", with: "")
+                let expected = files.map { $0.path.replacingOccurrences(of: " ", with: "\\ ").replacingOccurrences(of: "(", with: "\\(").replacingOccurrences(of: ")", with: "\\)") }.joined(separator: " ") + " "
+                guard sent == expected, !sent.contains("\r"), !sent.contains("\n") else { throw VoiceTestError.message("Dropped paths were \(sent), expected \(expected).") }
+                result["droppedPaths"] = sent
                 result["passed"] = true
                 save(); closeForTest(); return
             }

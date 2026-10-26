@@ -50,7 +50,8 @@ function animateVoiceWave(now) {
   if (now - lastWaveDraw >= 33) { drawVoiceWave(now); lastWaveDraw = now; }
   waveFrame = requestAnimationFrame(animateVoiceWave);
 }
-document.getElementById('voice-cancel').addEventListener('click', () => send({type: 'cancelVoice'}));
+const cancelButton = document.getElementById('voice-cancel');
+cancelButton.addEventListener('click', () => send({type: 'cancelVoice'}));
 pauseButton.addEventListener('click', () => send({type: 'pauseVoice'}));
 stopButton.addEventListener('click', () => send({type: 'voice'}));
 term.loadAddon(fit);
@@ -73,8 +74,9 @@ term.attachCustomKeyEventHandler(event => {
 window.voz = {
   write(base64) { term.write(Uint8Array.from(atob(base64), c => c.charCodeAt(0))); },
   insert(text) { term.paste(text); term.focus(); },
+  drop(paths) { const text = dropPaths(paths); if (text) term.paste(text + ' '); term.focus(); },
   focus() { term.focus(); },
-  state(state) {
+  state(state, lang = 'en-US') {
     const now = performance.now();
     if (state === 'preparing' || state === 'idle') { voiceSamples = []; voicePauses = []; }
     if (state === 'paused') {
@@ -91,16 +93,25 @@ window.voz = {
     document.body.dataset.dictating = String(state !== 'idle');
     voicePanel.hidden = state === 'idle';
     voicePanel.dataset.state = state;
-    const labels = {
+    // The panel speaks the language chosen for dictation.
+    const pt = lang.startsWith('pt');
+    const t = (en, ptText) => pt ? ptText : en;
+    document.documentElement.lang = pt ? 'pt' : 'en';
+    const labels = pt ? {
+      idle: '', preparing: 'Preparando o microfone…', recording: 'Gravando voz',
+      pausing: 'Pausando…', paused: 'Gravação pausada', resuming: 'Retomando…', stopping: 'Transcrevendo no seu Mac…'
+    } : {
       idle: '', preparing: 'Preparing microphone…', recording: 'Voice recording',
       pausing: 'Pausing…', paused: 'Recording paused', resuming: 'Resuming…', stopping: 'Transcribing on your Mac…'
     };
     voiceStatus.textContent = labels[state] ?? '';
-    voiceHint.textContent = state === 'paused' ? 'Audio preserved. Continue when you are ready.'
-      : state === 'stopping' ? 'Your text will appear in the prompt. Nothing is sent.'
-      : state === 'preparing' ? 'Wait for Listening before speaking.'
-      : 'Speak freely. Text appears after Stop & insert.';
-    pauseButton.textContent = state === 'paused' ? 'Continue' : 'Pause';
+    voiceHint.textContent = state === 'paused' ? t('Audio preserved. Continue when you are ready.', 'Áudio preservado. Continue quando quiser.')
+      : state === 'stopping' ? t('Your text will appear in the prompt. Nothing is sent.', 'O texto vai aparecer no prompt. Nada é enviado.')
+      : state === 'preparing' ? t('Wait for Listening before speaking.', 'Espere a gravação começar antes de falar.')
+      : t('Speak freely. Text appears after Stop & insert.', 'Fale à vontade. O texto aparece depois de Parar e inserir.');
+    pauseButton.textContent = state === 'paused' ? t('Continue', 'Continuar') : t('Pause', 'Pausar');
+    stopButton.textContent = t('Stop & insert', 'Parar e inserir');
+    cancelButton.textContent = t('Cancel', 'Cancelar');
     pauseButton.disabled = !['recording', 'paused'].includes(state);
     pauseButton.setAttribute('aria-pressed', String(state === 'paused'));
     stopButton.disabled = !['recording', 'paused'].includes(state);

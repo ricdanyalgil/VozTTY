@@ -17,9 +17,13 @@ Current source builds (0.2.4) show a compact, transparent voice activity line in
 
 Click **Dictate**, wait for **Listening**, speak, then **Stop & insert**. The shortcut is **Control + Option + V** while the terminal is focused. **Esc** cancels. Select a language from the toolbar. Dictation is passed through xterm.js's paste path, including bracketed paste when the child application requests that mode. It never appends Return.
 
-Window controls live only in the standard macOS title bar. The content header is reserved for voice input: readable spoken-language names, Cancel when needed and Dictate/Stop & insert. The language names map to the same pt-BR, pt-PT and en-US engine identifiers and preserve existing preferences. Closing an active session still asks for confirmation.
+Window controls live only in the standard macOS title bar. The content header holds the language picker and **Dictate**; both hide while dictating, so the voice strip inside the terminal is the only place with Pause, Stop & insert and Cancel. Labels follow the selected dictation language (Portuguese for pt-BR/pt-PT, English for en-US). The language names map to the same pt-BR, pt-PT and en-US engine identifiers and preserve existing preferences. Closing an active session still asks for confirmation.
 
 This preview has one window/session. No tabs, splits, session restoration, configurable profiles or notarization yet. Closing a running shell asks for confirmation. Closing the app loses unsent terminal text and unsaved recovery windows.
+
+## Attaching files
+
+Drag images, audio, PDFs or any other files from Finder onto the terminal. Like Terminal.app, VozTTY inserts their shell-escaped paths followed by a space, without Enter; Claude Code and Codex attach images and documents from those paths. Names containing control characters are skipped instead of pasted. Promised files (for example, an image dragged straight from a browser) are not supported yet: save the file first. `VOZ_TEST_MODE=drop` checks the native drop path end to end.
 
 ## Conversation layout
 

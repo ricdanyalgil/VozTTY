@@ -3,7 +3,7 @@
 <p align="center"><strong>Speak your next prompt. Stay in your terminal.</strong><br />Local voice dictation for your Mac terminal and VS Code.<br />Speak freely. Review the text. Press Enter when you are ready.</p>
 
 <p align="center">
-  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.6"><img src="https://img.shields.io/badge/public_preview-v0.2.6-orange?style=flat" alt="Public preview release" /></a>
+  <a href="https://github.com/ricdanyalgil/VozTTY/releases/tag/v0.2.7"><img src="https://img.shields.io/badge/public_preview-v0.2.7-orange?style=flat" alt="Public preview release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="MIT license" /></a>
   <img src="https://img.shields.io/badge/macOS-26%2B-black?logo=apple&amp;style=flat" alt="macOS 26 or later" />
   <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-555555?style=flat" alt="Apple Silicon arm64" />
@@ -36,7 +36,9 @@
 
 Text arrives **after you stop recording**. Word-by-word live transcription is not included.
 
-**New in Terminal 0.2.6:** a transparent, borderless voice strip with a full-width, 42 px waveform showing the last 20 seconds, paused intervals, recorded duration, **Pause / Continue**, **Stop & insert**, and **Cancel**. Both downloads now include [personal vocabulary](#personal-vocabulary) for assistant and project names.
+**New in Terminal 0.2.7:** drag images, audio, PDFs or any file from Finder into the terminal to insert their paths, so Claude Code and Codex can attach them. While you dictate, the top-bar buttons hide and only the voice strip controls remain; the interface follows the dictation language (Portuguese or English).
+
+**Terminal 0.2.6:** a transparent, borderless voice strip with a full-width, 42 px waveform showing the last 20 seconds, paused intervals, recorded duration, **Pause / Continue**, **Stop & insert**, and **Cancel**. Both downloads now include [personal vocabulary](#personal-vocabulary) for assistant and project names.
 
 ## Two ways to work
 
@@ -47,7 +49,7 @@ Text arrives **after you stop recording**. Word-by-word live transcription is no
 | Display | Black background, blue prompt accents and light output | Your VS Code terminal theme |
 | Window | Standard macOS title-bar controls | Standard VS Code controls |
 | Engine | AppKit, WebKit, xterm.js and a real macOS PTY | VS Code terminal API and a native Swift helper |
-| Current package | **0.2.6** | **0.1.3** |
+| Current package | **0.2.7** | **0.1.3** |
 
 The Mac terminal currently supports one window/session per instance. Tabs, split panes and session restoration are on the roadmap.
 
@@ -57,9 +59,9 @@ The Mac terminal currently supports one window/session per instance. Tabs, split
 
 | Package | Download | Install |
 | :--- | :--- | :--- |
-| Mac terminal | [VozTTY Terminal 0.2.6 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/voztty-terminal-0.2.6-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
-| VS Code extension | [VozTTY 0.1.3 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/voztty-0.1.3-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
-| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.6/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
+| Mac terminal | [VozTTY Terminal 0.2.7 ZIP](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.7/voztty-terminal-0.2.7-darwin-arm64.zip) | Extract and move **VozTTY.app** to **Applications** |
+| VS Code extension | [VozTTY 0.1.3 VSIX](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.7/voztty-0.1.3-darwin-arm64.vsix) | **Extensions → … → Install from VSIX…** |
+| Integrity | [SHA256SUMS.txt](https://github.com/ricdanyalgil/VozTTY/releases/download/v0.2.7/SHA256SUMS.txt) | Verify with `shasum -a 256 -c SHA256SUMS.txt` in the download folder |
 
 These are **public preview builds**, signed ad hoc and **not notarized by Apple**. macOS may require a manual security review before opening them. Building from source is also supported. The extension is distributed through GitHub Releases; it is not listed on the VS Code Marketplace yet.
 

@@ -14,18 +14,54 @@ function scheduleAccents() {
   if (accentFrame !== undefined) return;
   accentFrame = requestAnimationFrame(() => {
     accentFrame = undefined;
-    for (const {decoration, marker} of accents) { decoration.dispose(); marker.dispose(); }
+    for (const marker of accents) marker.dispose();
     accents = [];
     const buffer = term.buffer.active;
-    const rows = promptRows(buffer, buffer.viewportY, Math.min(buffer.length, buffer.viewportY + term.rows));
-    for (const row of rows) {
+    const top = buffer.viewportY, bottom = Math.min(buffer.length, top + term.rows);
+    const prompts = new Set(promptRows(buffer, top, bottom));
+    const drafts = draftRows(buffer);
+    for (let row = top; row < bottom; row++) {
+      const line = buffer.getLine(row);
+      const prompt = prompts.has(row);
+      const {text, at} = rowText(line);
+      const tokens = textTokens(text);
+      if (!prompt && !tokens.length) continue;
       const marker = term.registerMarker(row - buffer.baseY - buffer.cursorY);
       if (!marker) continue;
-      const decoration = term.registerDecoration({marker, width: term.cols, backgroundColor: '#081522', foregroundColor: '#a9d2ff', layer: 'bottom'});
-      if (decoration) accents.push({decoration, marker});
-      else marker.dispose();
+      accents.push(marker);
+      if (prompt) term.registerDecoration({marker, width: term.cols, layer: 'bottom', ...(drafts.has(row) ? COLORS.draft : COLORS.sent)});
+      for (const {kind, start, end} of tokens) {
+        term.registerDecoration({marker, x: at[start], width: at[end] - at[start], layer: 'top', foregroundColor: COLORS[kind]});
+      }
     }
   });
+}
+const COLORS = {
+  sent: {backgroundColor: '#081522', foregroundColor: '#a9d2ff'},
+  draft: {backgroundColor: '#191307', foregroundColor: '#f2d39a'},
+  path: '#7fdcc1', file: '#7fdcc1', url: '#c9b0ff',
+};
+// The prompt still being written is the last one on the live screen (Claude Code and Codex keep it at the bottom).
+function draftRows(buffer) {
+  const rows = promptRows(buffer, buffer.baseY, buffer.baseY + term.rows);
+  const draft = new Set();
+  for (let i = rows.length - 1; i >= 0 && (i === rows.length - 1 || rows[i] === rows[i + 1] - 1); i--) draft.add(rows[i]);
+  return draft;
+}
+// Cell column of every text index: wide characters (CJK, emoji) take two cells.
+function rowText(line) {
+  let text = '';
+  const at = [];
+  for (let x = 0; line && x < term.cols; x++) {
+    const cell = line.getCell(x);
+    if (!cell) break;
+    if (cell.getWidth() === 0) continue;
+    const chars = cell.getChars() || ' ';
+    for (let i = 0; i < chars.length; i++) at.push(x);
+    text += chars;
+  }
+  at.push(term.cols);
+  return {text, at};
 }
 const send = body => window.webkit.messageHandlers.terminal.postMessage(body);
 const voicePanel = document.getElementById('voice-panel');

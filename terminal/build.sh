@@ -20,16 +20,20 @@ cat > "$app/Contents/Info.plist" <<'PLIST'
 <key>CFBundleName</key><string>VozTTY</string>
 <key>CFBundleIconFile</key><string>VozTTY.icns</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.2.7</string>
-<key>CFBundleVersion</key><string>9</string>
+<key>CFBundleShortVersionString</key><string>0.2.8</string>
+<key>CFBundleVersion</key><string>10</string>
 <key>LSMinimumSystemVersion</key><string>26.0</string>
 <key>NSHighResolutionCapable</key><true/>
+<key>NSAppleEventsUsageDescription</key><string>Programs you run in VozTTY, such as AI agents, can automate other apps when you allow it.</string>
 <key>NSMicrophoneUsageDescription</key><string>VozTTY captures speech only when you start dictation and inserts the transcript into your terminal without pressing Enter.</string>
 </dict></plist>
 PLIST
 xattr -cr "$app"
-codesign --force --sign - "$app/Contents/Resources/VozEngine.app"
-codesign --force --sign - "$app"
+# A stable identity keeps macOS privacy grants (microphone, Accessibility, Screen Recording) across updates;
+# ad hoc signatures lose them on every build. Example: VOZTTY_SIGN="Developer ID Application: …" ./terminal/build.sh
+sign=${VOZTTY_SIGN:--}
+codesign --force --sign "$sign" "$app/Contents/Resources/VozEngine.app"
+codesign --force --sign "$sign" "$app"
 codesign --verify --deep --strict "$app"
 ditto --norsrc --noextattr "$app" "$PWD/VozTTY.app"
 print "Built: $PWD/VozTTY.app"

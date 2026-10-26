@@ -174,6 +174,13 @@ extension TerminalWindow {
                 result["passed"] = true
                 save(); closeForTest(); return
             }
+            if mode == "snapshot", let path = env["VOZ_TEST_SNAPSHOT"] {
+                // Visual check of colours: photographs the terminal page, no Screen Recording grant needed.
+                let image = try await web.takeSnapshot(configuration: nil)
+                guard let tiff = image.tiffRepresentation, let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) else { throw VoiceTestError.message("Snapshot failed.") }
+                try png.write(to: URL(fileURLWithPath: path))
+                result["passed"] = true; save(); closeForTest(); return
+            }
             if mode == "inspect" { result["passed"] = true; save(); closeForTest(); return }
             if env["VOZ_TEST_TRUST_DISPOSABLE"] == "1", before.contains("Accessing workspace:"), before.contains("Yes, I trust this folder") {
                 let cwd = FileManager.default.currentDirectoryPath

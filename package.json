@@ -19,7 +19,7 @@
     "onStartupFinished"
   ],
   "scripts": {
-    "test": "node --test test/dictation.test.js test/prompt-rows.test.js test/drop-paths.test.js test/voice-wave.test.js test/vocabulary-command.test.js"
+    "test": "node --test test/dictation.test.js test/prompt-rows.test.js test/text-tokens.test.js test/drop-paths.test.js test/voice-wave.test.js test/vocabulary-command.test.js"
   },
   "contributes": {
     "commands": [

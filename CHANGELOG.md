@@ -1,5 +1,14 @@
 # Changelog
 
+## Public preview v0.2.8 — 2026-10-26
+
+Terminal 0.2.8; the VS Code extension remains 0.1.3.
+
+- The whole sent prompt is blue, including the indented rows Claude Code and Codex create when they break a long prompt.
+- The draft still being written is amber; paths and files are mint; links are lilac.
+- New VozTTY → Allow Computer Control… menu item: requests Accessibility and Screen Recording so agent CLIs in the terminal can use the mouse, keyboard and screen; AppleScript automation now has a usage description.
+- Signed with a Developer ID so macOS privacy grants survive updates. Not notarized yet.
+
 ## Public preview v0.2.7 — 2026-10-26
 
 Terminal 0.2.7; the VS Code extension remains 0.1.3.

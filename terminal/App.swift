@@ -266,6 +266,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let appMenu = NSMenu()
         let vocabularyItem = appMenu.addItem(withTitle: "Edit Vocabulary…", action: #selector(editVocabulary), keyEquivalent: ",")
         vocabularyItem.target = self
+        let controlItem = appMenu.addItem(withTitle: pt ? "Permitir controle do computador…" : "Allow Computer Control…", action: #selector(allowComputerControl), keyEquivalent: "")
+        controlItem.target = self
         appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Quit VozTTY", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         appItem.submenu = appMenu
@@ -284,6 +286,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let terminal { Task { await terminal.runIntegrationTest() } }
         #endif
     }
+    private var pt: Bool { (UserDefaults.standard.string(forKey: "language") ?? "pt-BR").hasPrefix("pt") }
+
+    /// Programs started in this terminal inherit its macOS privacy grants, so agent CLIs can drive the mouse,
+    /// keyboard and screen once VozTTY itself is allowed. Ad hoc builds lose the grant on every rebuild.
+    @objc func allowComputerControl() {
+        let input = AXIsProcessTrustedWithOptions(["AXTrustedCheckOptionPrompt": true] as CFDictionary)
+        let screen = CGPreflightScreenCaptureAccess() || CGRequestScreenCaptureAccess()
+        let alert = NSAlert()
+        let state = { (ok: Bool) in ok ? (self.pt ? "permitido" : "allowed") : (self.pt ? "falta permitir" : "not allowed yet") }
+        alert.messageText = input && screen
+            ? (pt ? "O VozTTY já pode controlar o computador" : "VozTTY can control this Mac")
+            : (pt ? "Permita o VozTTY nos Ajustes do Sistema" : "Allow VozTTY in System Settings")
+        alert.informativeText = (pt
+            ? "Mouse e teclado (Acessibilidade): \(state(input))\nVer a tela (Gravação de Tela): \(state(screen))\n\nO que rodar neste terminal passa a poder usar o mouse, o teclado e a tela. Depois de permitir, feche e abra o VozTTY. AppleScript pede autorização na primeira vez que for usado."
+            : "Mouse and keyboard (Accessibility): \(state(input))\nScreen (Screen Recording): \(state(screen))\n\nPrograms run in this terminal can then use the mouse, keyboard and screen. Reopen VozTTY after allowing. AppleScript asks the first time it is used.")
+        alert.addButton(withTitle: "OK")
+        if !input || !screen { alert.addButton(withTitle: pt ? "Abrir Ajustes" : "Open Settings") }
+        if alert.runModal() == .alertSecondButtonReturn {
+            let pane = input ? "Privacy_ScreenCapture" : "Privacy_Accessibility"
+            NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)")!)
+        }
+    }
+
     @objc func editVocabulary() {
         do {
             try Vocabulary.createFileIfNeeded()

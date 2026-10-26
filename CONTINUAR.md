@@ -73,3 +73,10 @@ The maintainer requested continued improvements to the pasted GitHub General Set
 ## Terminal 0.2.7 — 2026-10-26
 
 Finder file drops insert shell-escaped paths (`terminal/web/drop-paths.js`, `DropWebView` in App.swift) so CLIs attach images/audio/PDFs; no Enter. Top-bar language picker and Dictate hide while dictating; the top Cancel button was removed. UI labels follow the dictation language. Verified: 18 JS tests, harness `drop` and `layout` modes. Not verified: promised-file drags (browser images) and a live attach inside Claude Code/Codex. Installed by swapping the /Applications bundle; old 0.2.6 kept in the session scratchpad. Release v0.2.7 published and checksums verified from a fresh download.
+
+## Terminal 0.2.8 — 2026-10-26
+
+Prompt continuation rows (two-space indent) stay blue; draft amber; paths/files mint; links lilac (`text-tokens.js`).
+Menu Allow Computer Control… (Accessibility + Screen Recording). Signed with the Danyalgil & Danyalgil Developer ID
+via `VOZTTY_SIGN`, so grants survive updates. Harness gained `snapshot` mode (WKWebView photo, no Screen Recording).
+Verified: 21 JS tests, drop/layout/snapshot. Not verified: the permission prompts themselves and real Codex screens.

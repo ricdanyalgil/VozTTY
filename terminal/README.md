@@ -25,9 +25,15 @@ This preview has one window/session. No tabs, splits, session restoration, confi
 
 Drag images, audio, PDFs or any other files from Finder onto the terminal. Like Terminal.app, VozTTY inserts their shell-escaped paths followed by a space, without Enter; Claude Code and Codex attach images and documents from those paths. Names containing control characters are skipped instead of pasted. Promised files (for example, an image dragged straight from a browser) are not supported yet: save the file first. `VOZ_TEST_MODE=drop` checks the native drop path end to end.
 
+## Allowing computer control
+
+VozTTY → **Allow Computer Control…** asks macOS for Accessibility (mouse and keyboard) and Screen Recording. Programs started in the terminal inherit these grants, so an agent CLI can operate other apps. AppleScript automation is requested the first time a program uses it. Anything you run in this terminal gets the same access: allow it only if you trust what runs there.
+
+Ad hoc builds lose every macOS privacy grant (including the microphone) when rebuilt. Release builds are signed with a Developer ID; set `VOZTTY_SIGN` to your identity to keep grants across local rebuilds.
+
 ## Conversation layout
 
-The black terminal keeps questions in soft blue (`#a9d2ff`) on a subtle dark-blue background, with ordinary output in neutral light gray. The header groups app identity and microphone status; the footer separates the color legend from keyboard shortcuts. Terminal control sequences and clipboard contents are not rewritten to apply colors.
+Since 0.2.8, prompt rows the CLI indents itself (Claude Code and Codex break long prompts into rows starting with two spaces) stay blue, including blank rows between paragraphs. The draft still being written, the last prompt on the live screen, is amber (`#f2d39a` on `#191307`). Paths and document names are mint (`#7fdcc1`) and links lilac (`#c9b0ff`), per row: a path wrapped onto the next row is coloured only on its first row. The black terminal keeps questions in soft blue (`#a9d2ff`) on a subtle dark-blue background, with ordinary output in neutral light gray. The header groups app identity and microphone status; the footer separates the color legend from keyboard shortcuts. Terminal control sequences and clipboard contents are not rewritten to apply colors.
 
 Visual accents recognize lines starting with `›`, `❯` or `>` followed by whitespace, including their automatic line wraps. This covers the tested Codex, Claude Code and Antigravity prompts. It is a visual cue, not role metadata: a quoted output line using the same prefix can also be blue, and explicit multiline continuations without a prefix may keep their CLI colors. ANSI colors in other output are preserved. The renderer scans only the visible rows and refreshes accents on redraw, scroll and resize.
 

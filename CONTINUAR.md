@@ -69,3 +69,7 @@ The generated 1280 × 640 cover was uploaded through authenticated GitHub Settin
 ## Community setup
 
 The maintainer requested continued improvements to the pasted GitHub General Settings screen. Enabled Discussions (default Announcements, General, Ideas, Polls, Q&A, Show and tell categories), added English bug/improvement issue forms, a question/install contact chooser and a pull request template, and linked community entry points from README/CONTRIBUTING. Forms were parsed as YAML and checked for required metadata/unique field IDs. No application, release, merge-policy, security, sponsorship or visibility changes.
+
+## Terminal 0.2.7 — 2026-10-26
+
+Finder file drops insert shell-escaped paths (`terminal/web/drop-paths.js`, `DropWebView` in App.swift) so CLIs attach images/audio/PDFs; no Enter. Top-bar language picker and Dictate hide while dictating; the top Cancel button was removed. UI labels follow the dictation language. Verified: 18 JS tests, harness `drop` and `layout` modes. Not verified: promised-file drags (browser images) and a live attach inside Claude Code/Codex. Installed by swapping the /Applications bundle; old 0.2.6 kept in the session scratchpad. Release v0.2.7 published and checksums verified from a fresh download.

@@ -1,5 +1,14 @@
 # Changelog
 
+## Public preview v0.2.9 — 2026-10-27
+
+Terminal 0.2.9; the VS Code extension remains 0.1.3.
+
+- Several terminals at once: Shell → New Window (⌘N) or right-click the Dock icon → New Window. Each window runs its own login shell and opens slightly offset from the previous one.
+- New Window menu listing the open terminals.
+- Closing a window ends only its session; VozTTY quits with the last window. Quitting with several sessions running asks once.
+- A command passed after `--` still runs only in the first window; later windows start a login shell in your home folder.
+
 ## Public preview v0.2.8 — 2026-10-26
 
 Terminal 0.2.8; the VS Code extension remains 0.1.3.

@@ -80,3 +80,10 @@ Prompt continuation rows (two-space indent) stay blue; draft amber; paths/files 
 Menu Allow Computer Control… (Accessibility + Screen Recording). Signed with the Danyalgil & Danyalgil Developer ID
 via `VOZTTY_SIGN`, so grants survive updates. Harness gained `snapshot` mode (WKWebView photo, no Screen Recording).
 Verified: 21 JS tests, drop/layout/snapshot. Not verified: the permission prompts themselves and real Codex screens.
+
+## Terminal 0.2.9 — 2026-10-27
+
+Multiple windows: `AppDelegate.terminals` replaces the single `terminal`; Shell → New Window ⌘N, Dock menu, Window menu,
+`applicationShouldTerminateAfterLastWindowClosed`. Windows cascade from the centred first one. Quit asks once when
+several sessions run. Verified: three windows via ⌘N, each with its own zsh and offset position; layout harness and
+native unit check. Not verified by hand: the Dock right-click menu and two windows dictating at the same time.

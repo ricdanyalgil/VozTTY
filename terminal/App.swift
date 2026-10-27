@@ -32,13 +32,17 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
     let assistant = NSTextField(labelWithString: "")
     let shortcuts = NSTextField(labelWithString: "")
     private var launched = false
-    private var allowClose = false
+    private(set) var allowClose = false
+    /// Only the first window runs the command given after `--`; windows opened later start a login shell.
+    private let primary: Bool
     private var recoveredTranscripts: [NSWindow] = []
     var didLoad: (() -> Void)?
     var inserted: ((String) -> Void)?
     var inputReceived: ((String) -> Void)?
+    var closed: (() -> Void)?
 
-    override init() {
+    init(primary: Bool = true) {
+        self.primary = primary
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .nonPersistent()
         web = DropWebView(frame: .zero, configuration: config)
@@ -213,10 +217,10 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
             launched = true
             do {
                 let args = CommandLine.arguments
-                if let index = args.firstIndex(of: "--"), args.count > index + 1 {
+                if primary, let index = args.firstIndex(of: "--"), args.count > index + 1 {
                     try shell.start(executable: args[index + 1], arguments: Array(args.dropFirst(index + 2)), directory: FileManager.default.currentDirectoryPath)
                 } else {
-                    let cwd = FileManager.default.currentDirectoryPath
+                    let cwd = primary ? FileManager.default.currentDirectoryPath : NSHomeDirectory()
                     try shell.start(executable: "/bin/zsh", arguments: ["-l"], directory: cwd == "/" ? NSHomeDirectory() : cwd)
                 }
                 if let columns = body["columns"] as? Int, let rows = body["rows"] as? Int { shell.resize(columns: columns, rows: rows) }
@@ -248,18 +252,18 @@ final class TerminalWindow: NSObject, WKScriptMessageHandler, WKNavigationDelega
             alert.addButton(withTitle: tr("Close Terminal", "Fechar terminal"))
             guard alert.runModal() == .alertSecondButtonReturn else { return false }
         }
-        allowClose = true
-        dictation.cancel()
-        shell.close()
+        end()
         return true
     }
-    func windowWillClose(_ notification: Notification) { NSApplication.shared.terminate(nil) }
+    func end() { allowClose = true; dictation.cancel(); shell.close() }
+    func windowWillClose(_ notification: Notification) { closed?() }
     func closeForTest() { allowClose = true; window.performClose(nil) }
 }
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    var terminal: TerminalWindow?
+    var terminals: [TerminalWindow] = []
+    private var cascade = NSPoint.zero
     func applicationDidFinishLaunching(_ notification: Notification) {
         let main = NSMenu()
         let appItem = NSMenuItem()
@@ -272,6 +276,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         appMenu.addItem(withTitle: "Quit VozTTY", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         appItem.submenu = appMenu
         main.addItem(appItem)
+        let shellItem = NSMenuItem()
+        let shellMenu = NSMenu(title: "Shell")
+        shellMenu.addItem(withTitle: pt ? "Nova janela" : "New Window", action: #selector(newWindow), keyEquivalent: "n").target = self
+        shellItem.submenu = shellMenu
+        main.addItem(shellItem)
         let editItem = NSMenuItem(title: "Edit", action: nil, keyEquivalent: "")
         let edit = NSMenu(title: "Edit")
         for (title, action, key) in [("Copy", "copy:", "c"), ("Paste", "paste:", "v"), ("Select All", "selectAll:", "a")] {
@@ -279,13 +288,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         editItem.submenu = edit
         main.addItem(editItem)
+        let windowItem = NSMenuItem()
+        let windowMenu = NSMenu(title: pt ? "Janela" : "Window")
+        windowItem.submenu = windowMenu
+        main.addItem(windowItem)
         NSApplication.shared.mainMenu = main
-        terminal = TerminalWindow()
+        NSApplication.shared.windowsMenu = windowMenu
+        newWindow()
         NSApplication.shared.activate(ignoringOtherApps: true)
         #if VOZ_TEST
-        if let terminal { Task { await terminal.runIntegrationTest() } }
+        if let terminal = terminals.first { Task { await terminal.runIntegrationTest() } }
         #endif
     }
+
+    @objc func newWindow() {
+        let terminal = TerminalWindow(primary: terminals.isEmpty)
+        // The first window stays centred (.zero leaves it in place); each later one steps down and right.
+        cascade = terminal.window.cascadeTopLeft(from: terminals.isEmpty ? .zero : cascade)
+        // Removed on the next turn so the window is not released inside its own close callback.
+        terminal.closed = { [weak self, weak terminal] in
+            DispatchQueue.main.async { self?.terminals.removeAll { $0 === terminal } }
+        }
+        terminals.append(terminal)
+    }
+    func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
+        let menu = NSMenu()
+        menu.addItem(withTitle: pt ? "Nova janela" : "New Window", action: #selector(newWindow), keyEquivalent: "").target = self
+        return menu
+    }
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag { newWindow() }
+        return true
+    }
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
     private var pt: Bool { (UserDefaults.standard.string(forKey: "language") ?? "pt-BR").hasPrefix("pt") }
 
     /// Programs started in this terminal inherit its macOS privacy grants, so agent CLIs can drive the mouse,
@@ -320,7 +355,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard let terminal else { return .terminateNow }
-        return terminal.windowShouldClose(terminal.window) ? .terminateNow : .terminateCancel
+        let running = terminals.filter { !$0.allowClose && $0.shell.pid > 0 }
+        if running.count == 1 { return running[0].windowShouldClose(running[0].window) ? .terminateNow : .terminateCancel }
+        if running.count > 1 {
+            let alert = NSAlert()
+            alert.messageText = pt ? "Fechar \(running.count) terminais?" : "Close \(running.count) terminals?"
+            alert.informativeText = pt ? "Os programas em execução vão terminar e o texto não enviado será perdido." : "Running programs will end and unsent prompt text will be lost."
+            alert.addButton(withTitle: pt ? "Manter abertos" : "Keep Open")
+            alert.addButton(withTitle: pt ? "Fechar todos" : "Close All")
+            guard alert.runModal() == .alertSecondButtonReturn else { return .terminateCancel }
+            running.forEach { $0.end() }
+        }
+        return .terminateNow
     }
 }

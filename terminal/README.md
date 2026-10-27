@@ -21,6 +21,10 @@ Window controls live only in the standard macOS title bar. The content header ho
 
 This preview has one window/session. No tabs, splits, session restoration, configurable profiles or notarization yet. Closing a running shell asks for confirmation. Closing the app loses unsent terminal text and unsaved recovery windows.
 
+## Windows
+
+Shell → New Window (⌘N) or right-click the Dock icon → New Window opens another terminal with its own login shell in your home folder. Each window dictates on its own. The Window menu lists open terminals; closing one ends only that session, and VozTTY quits with the last window. A command given after `--` runs only in the first window.
+
 ## Attaching files
 
 Drag images, audio, PDFs or any other files from Finder onto the terminal. Like Terminal.app, VozTTY inserts their shell-escaped paths followed by a space, without Enter; Claude Code and Codex attach images and documents from those paths. Names containing control characters are skipped instead of pasted. Promised files (for example, an image dragged straight from a browser) are not supported yet: save the file first. `VOZ_TEST_MODE=drop` checks the native drop path end to end.
